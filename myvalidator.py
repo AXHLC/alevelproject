@@ -37,6 +37,14 @@ def passcheck(password):
     else:
         return False
 
+def rangecheck(number, thresh):
+    if number == thresh:
+        return True
+    else:
+        return False
+
+
+
 
 # testing
 if __name__ == "__main__":
