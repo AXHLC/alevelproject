@@ -48,7 +48,7 @@ def rangecheck(number, thresh):
 
 # testing
 if __name__ == "__main__":
-    #print(numscheck("b3338", 10, 3))
+    #print(lengthscheck("b3338", 10, 3))
     #print(emailcheck("dirguhdfklj"))
     #print(passcheck("t8hareeAnonums"))
     print(rangecheck(23, 53))
