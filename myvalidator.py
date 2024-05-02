@@ -1,3 +1,4 @@
+
 def lengthscheck(string, nums, option):
 
     # option 1 is to check the nums of string is equal to the nums necessary
@@ -31,14 +32,14 @@ def emailcheck(email):
 
 def passcheck(password):
     import re
-    # this validates a string eneteres to include numbers, capital letters, and special characters
+    # this validates a string entered to include numbers, capital letters, and special characters
     if re.search('\d', password) and re.search(r'[A-Z]', password) and re.search('[+,?,#,£,$,%,&]', password):
         return True
     else:
         return False
 
-def rangecheck(number, thresh):
-    if number == thresh:
+def rangecheck(number, lower, upper):
+    if number >= lower and number <= upper:
         return True
     else:
         return False
@@ -54,7 +55,7 @@ if __name__ == "__main__":
     #print(lengthscheck("b3338", 10, 3))
     #print(emailcheck("dirguhdfklj"))
     #print(passcheck("t8hareeAnonums"))
-    #print(rangecheck(23, 53))
-    print(prescheck("b"))
+    print(rangecheck(23, 20, 60))
+    #print(prescheck("b"))
 
 
