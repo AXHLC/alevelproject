@@ -57,3 +57,7 @@ if __name__ == "__main__":
     #print(rangecheck(23, 53))
     print(prescheck("b"))
 
+
+
+    # this is to check using terminal
+
