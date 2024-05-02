@@ -1,5 +1,7 @@
 import myvalidator
 
-x = myvalidator.emailcheck("a.chaal231gmail.com")
+
+
+x = myvalidator.lengthscheck("daddy", 2, 3)
 print(x)
 

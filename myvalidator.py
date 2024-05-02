@@ -43,14 +43,17 @@ def rangecheck(number, thresh):
     else:
         return False
 
-
-
+def prescheck(inp):
+    while inp == "":
+        return False
+    else:
+        return True
 
 # testing
 if __name__ == "__main__":
     #print(lengthscheck("b3338", 10, 3))
     #print(emailcheck("dirguhdfklj"))
     #print(passcheck("t8hareeAnonums"))
-    print(rangecheck(23, 53))
-
+    #print(rangecheck(23, 53))
+    print(prescheck("b"))
 
