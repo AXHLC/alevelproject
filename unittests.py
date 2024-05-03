@@ -1,20 +1,19 @@
-import myvalidator
+import unittest
+from myvalidator import lengthscheck  # the lengthscheck function is in the myvalidator.py file
 
-def test_lengthscheck():
-    # Test case 1: Check if the length of the string is equal to nums
-    result = myvalidator.lengthscheck("hello", 5, 1)
-    if result != True:
-        print("Test case 1 failed: expected True, got", result)
+class TestLengthsCheck(unittest.TestCase):
 
-    # Test case 2: Check if the length of the string is greater than or equal to nums
-    result = myvalidator.lengthscheck("hello", 4, 2)
-    if result != True:
-        print("Test case 2 failed: expected True, got", result)
+    def test_equal_length(self):
+        self.assertTrue(lengthscheck("hello", 5, 1))
+        self.assertFalse(lengthscheck("hello", 6, 1))
 
-    # Test case 3: Check if the length of the string is less than or equal to nums
-    result = myvalidator.lengthscheck("hello", 6, 3)
-    if result != True:
-        print("Test case 3 failed: expected True, got", result)
+    def test_greater_than_length(self):
+        self.assertTrue(lengthscheck("hello", 4, 2))
+        self.assertFalse(lengthscheck("hello", 6, 2))
 
-# Run the tests
-test_lengthscheck()
+    def test_less_than_length(self):
+        self.assertTrue(lengthscheck("hello", 6, 3))
+        self.assertFalse(lengthscheck("hello", 4, 3))
+
+if __name__ == '__main__':
+    unittest.main()
