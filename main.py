@@ -1,7 +1,5 @@
-import myvalidator
+from myvalidator import TheValidation
 
-
-
-x = myvalidator.lengthscheck("daddy", 2, 3)
+validator = TheValidation()
+x = validator.lengthscheck("daddy", 5, 1)
 print(x)
-
