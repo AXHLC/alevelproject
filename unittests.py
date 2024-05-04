@@ -1,9 +1,9 @@
 import unittest
-from myvalidator import MyValidators
+from myvalidator import TheValidation
 
 class TestLengthsCheck(unittest.TestCase):
     def setUp(self):
-        self.validator = MyValidators()
+        self.validator = TheValidation()
 
     def test_equal_length(self):
         self.assertTrue(self.validator.lengthscheck("hello", 5, 1))

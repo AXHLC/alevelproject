@@ -1,6 +1,6 @@
 import re
 
-class MyValidators:
+class TheValidation:
 
     def __init__(self):
         pass
@@ -34,7 +34,7 @@ class MyValidators:
 
 # testing
 if __name__ == "__main__":
-    validator = MyValidators()
+    validator = TheValidation()
     print(validator.lengthscheck("b3338", 10, 3))
     print(validator.emailcheck("dirguh@dfklj.com"))
     print(validator.passcheck("t8hareeAnonu?ms"))
