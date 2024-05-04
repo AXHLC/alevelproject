@@ -2,6 +2,8 @@ import unittest
 from myvalidator import TheValidation
 
 class TestLengthsCheck(unittest.TestCase):
+
+
     def setUp(self):
         self.validator = TheValidation()
 
