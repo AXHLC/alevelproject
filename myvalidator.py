@@ -22,10 +22,13 @@ class TheValidation:
                 return True
             return False
 
+
     def emailcheck(self, email):
-        # regex is the set of characters that are necessary in an email address
-        regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
-        return bool(re.fullmatch(regex, email))
+        pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if re.match(pattern, email):
+            return True
+        else:
+            return False
 
     def passcheck(self, password):
         # Checks that the variable password has the characters necessary
