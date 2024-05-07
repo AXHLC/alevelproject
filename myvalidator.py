@@ -42,6 +42,17 @@ class TheValidation:
         # Checks something has been inputted
         return bool(inp)
 
+    # date check
+    # leap year check
+    # day check
+    # month check
+    # year check
+    # phone check
+    # name check
+    # username check
+    # age check
+    # birthday check [make sure they are withing age range 0-150, valid date format from first function]
+
 # testing
 if __name__ == "__main__":
     validator = TheValidation()
