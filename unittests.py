@@ -29,7 +29,7 @@ class TestEmailCheck(unittest.TestCase):
         self.validator = TheValidation()
 
     # test_email_check method is there to test the emailcheck method from myvalidator.py
-    def test_email_check(self):
+    def validemail(self):
         valid_emails = [
             'user@example.com',
             'email@example.co.jp',
@@ -44,6 +44,24 @@ class TestEmailCheck(unittest.TestCase):
         for email in valid_emails:
             # Tests valid emails
             self.assertTrue(self.validator.emailcheck(email))
+
+    def invalidemail(self):
+        invalid_emails = [
+            'plainaddress',
+            '@missingusername.com',
+            'noat.com',
+            'nodotcom.',
+            'nodullstop@',
+            '124353552555.com',
+            'email@11',]
+
+        for email in invalid_emails:
+            # Tests invalid emails
+            self.assertFalse(self.validator.emailcheck(email))
+
+    def test_email_check(self):
+        self.validemail()
+        self.invalidemail()
 # testing
 if __name__ == '__main__':
     unittest.main()
