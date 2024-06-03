@@ -52,11 +52,12 @@ class TheValidation:
 
     # username check
     def usernamecheck(self, username):
-        pattern = r'^[a-zA-Z0-9]'
-        if len(username) != 6 or username != pattern:
+        # Can have any combination of lowercase letters, digits, underscores, dots, or hyphens
+        pattern = r'^[A-Za-z0-9_.-]'
+        if len(username) > 8 or re.fullmatch(pattern, username) == False:
             return False
         else:
-            return
+            return True
 
     # age check
     # birthday check [make sure they are withing age range 0-150, valid date format from first function]
@@ -64,8 +65,10 @@ class TheValidation:
 # testing
 if __name__ == "__main__":
     validator = TheValidation()
-    print(validator.lengthscheck("b3338", 10, 3))
-    print(validator.emailcheck("dirguh@dfklj.com"))
-    print(validator.passcheck("t8hareeAnonu?ms"))
-    print(validator.rangecheck(23, 2, 60))
-    print(validator.prescheck(""))
+    #print(validator.lengthscheck("b3338", 10, 3))
+    #print(validator.emailcheck("dirguh@dfklj.com"))
+    #print(validator.passcheck("t8hareeAnonu?ms"))
+    #print(validator.rangecheck(23, 2, 60))
+    #print(validator.prescheck(""))
+
+    print(validator.usernamecheck("Aa-J.1"))
