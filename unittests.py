@@ -62,6 +62,27 @@ class TestEmailCheck(unittest.TestCase):
     def test_email_check(self):
         self.validemail()
         self.invalidemail()
+
+class testusernamecheck(unittest.TestCase):
+
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def validusername(self,):
+        valid_usernames = [
+            'achl06.',
+            'AaBbCC',
+            'AB-456',
+            'USER123',
+            'Pats.3-',
+            'kNIt.69',
+            'El-y-12',
+            'falciato'
+        ]
+
+        for user in valid_usernames:
+            # Tests invalid emails
+            self.assertFalse(self.validator.usernamecheck(user))
 # testing
 if __name__ == '__main__':
     unittest.main()
