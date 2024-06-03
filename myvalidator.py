@@ -49,7 +49,15 @@ class TheValidation:
     # year check
     # phone check
     # name check
+
     # username check
+    def usernamecheck(self, username):
+        pattern = r'^[a-zA-Z0-9]'
+        if len(username) != 6 or username != pattern:
+            return False
+        else:
+            return
+
     # age check
     # birthday check [make sure they are withing age range 0-150, valid date format from first function]
 
