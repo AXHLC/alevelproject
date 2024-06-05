@@ -1,6 +1,7 @@
 import unittest
 from myvalidator import TheValidation
 
+# unit test on lengths check method
 class TestLengthsCheck(unittest.TestCase):
 
     # setUp method is there to set up TheValidation object from myvalidator.py
@@ -22,6 +23,7 @@ class TestLengthsCheck(unittest.TestCase):
         self.assertTrue(self.validator.lengthscheck("hello", 6, 3))
         self.assertFalse(self.validator.lengthscheck("hello", 4, 3))
 
+# unit test on email check method
 class TestEmailCheck(unittest.TestCase):
 
     # setUp method is there to set up TheValidation object from myvalidator.py
@@ -45,6 +47,7 @@ class TestEmailCheck(unittest.TestCase):
             # Tests valid emails
             self.assertTrue(self.validator.emailcheck(email))
 
+
     def invalidemail(self):
         invalid_emails = [
             'plainaddress',
@@ -63,6 +66,7 @@ class TestEmailCheck(unittest.TestCase):
         self.validemail()
         self.invalidemail()
 
+# unit test on username check method
 class testusernamecheck(unittest.TestCase):
 
     def setUp(self):
@@ -72,17 +76,38 @@ class testusernamecheck(unittest.TestCase):
         valid_usernames = [
             'achl06.',
             'AaBbCC',
-            'AB-456',
+            'ABC-456',
             'USER123',
             'Pats.3-',
             'kNIt.69',
-            'El-y-12',
-            'falciato'
+            'Ely-12',
+            'falciat',
+            'ABC',
+            '12ERT5',
         ]
 
         for user in valid_usernames:
-            # Tests invalid emails
+            # Tests valid usernames
+            self.assertTrue(self.validator.usernamecheck(user))
+
+    def invalidusername(self,):
+        invalid_usernames = [
+            'achl06875687587.',
+            '646734365',
+            'A54345',
+            'a1b2c3',
+            ']hh555',
+            'kn7it7g]',
+            'El-y-12',
+            'fa778',
+            'AC',
+            '1',
+        ]
+
+        for user in invalid_usernames:
+            # Tests invalid usernames
             self.assertFalse(self.validator.usernamecheck(user))
 # testing
 if __name__ == '__main__':
     unittest.main()
+

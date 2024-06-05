@@ -3,8 +3,6 @@ import calendar
 
 
 # This class is used to validate the input of the user
-
-
 class TheValidation:
 
     def __init__(self):

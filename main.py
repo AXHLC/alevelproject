@@ -1,6 +1,7 @@
 from myvalidator import TheValidation
+import unittests
 # testing
 
-validator = TheValidation()
-x = validator.lengthscheck("daddy", 5, 1)
+testit = unittests.testusernamecheck()
+x = testit
 print(x)
