@@ -2,6 +2,13 @@
 from myvalidator import TheValidation
 import unittest
 
+# -------------------MyValidator-------------------
+# running myvalidator.py from main.py
+validator = TheValidation()
+x = validator.lengthscheck("daddy", 5, 1)
+print(x)
+# -------------------------------------------------
+
 # -------------------Unittests-------------------
 # running unittests.py from main.py
 # Load all tests from unittests.py
