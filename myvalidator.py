@@ -53,11 +53,12 @@ class TheValidation:
     # username check
     def usernamecheck(self, username):
         # Can have any combination of lowercase letters, digits, underscores, dots, or hyphens. Three consecutive letters
-        pattern = r'^[a-z0-9_.-]*[a-zA-Z]{3}[a-z0-9_.-]*$'
-        if re.fullmatch(pattern, username) == False:
-            return False
-        else:
+        username = username.lower()
+        pattern = r'[a-z]{3}'
+        if len(username) <= 8 and re.search(pattern, username):
             return True
+        else:
+            return False
 
     # age check
     # birthday check [make sure they are withing age range 0-150, valid date format from first function]
