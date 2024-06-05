@@ -52,9 +52,9 @@ class TheValidation:
 
     # username check
     def usernamecheck(self, username):
-        # Can have any combination of lowercase letters, digits, underscores, dots, or hyphens
-        pattern = r'^[A-Za-z0-9_.-]'
-        if len(username) > 8 or re.fullmatch(pattern, username) == False:
+        # Can have any combination of lowercase letters, digits, underscores, dots, or hyphens. Three consecutive letters
+        pattern = r'^[a-z0-9_.-]*[a-zA-Z]{3}[a-z0-9_.-]*$'
+        if re.fullmatch(pattern, username) == False:
             return False
         else:
             return True
@@ -71,4 +71,4 @@ if __name__ == "__main__":
     #print(validator.rangecheck(23, 2, 60))
     #print(validator.prescheck(""))
 
-    print(validator.usernamecheck("Aa-J.1"))
+    print(validator.usernamecheck("a"))
