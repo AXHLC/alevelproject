@@ -1,7 +1,11 @@
-from myvalidator import TheValidation
-import unittests
 # testing
+from myvalidator import TheValidation
+import unittest
 
-testit = unittests.testusernamecheck()
-x = testit
-print(x)
+# -------------------Unittests-------------------
+# running unittests.py from main.py
+# Load all tests from unittests.py
+test_suite = unittest.TestLoader().loadTestsFromName('unittests')
+# Run the tests
+unittest.TextTestRunner().run(test_suite)
+# -------------------------------------------------
