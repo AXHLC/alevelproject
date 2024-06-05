@@ -1,4 +1,5 @@
 import re
+import calendar
 
 
 # This class is used to validate the input of the user
@@ -50,13 +51,59 @@ class TheValidation:
         # Checks something has been inputted
         return bool(inp)
 
+    # age check
+    def age(self, data):
+        if re.match(r'^[0-9]+$', data) and 0 < int(data) < 150:
+            return True
+        return False
+
+
     # date check
+    def datecheck(self, date):
+        # This function checks if the given date is in the format DD/MM/YYYY.
+        # date can only be between the years 1900 and 2099
+        pattern = r'^([0-2][0-9]|(3)[0-1])/(0?[1-9]|1[012])/((19|20)\d\d)$'
+        if re.fullmatch(pattern, date):
+            return True
+        else:
+            return False
+
     # leap year check
+    def leapyearcheck(self, lyear):
+        # This function checks if the given year is a leap year.
+        # year: the year to check
+        return calendar.isleap(lyear)
+
     # day check
+    def daycheck(self, day, month, year):
+        # This function checks if the given day is valid.
+        # day: the day to check
+        # month: the month to check
+        # year: the year to check (for leap years)
+        if month in [4, 6, 9, 11]:
+            return 1 <= day <= 30
+        elif month == 2:
+            if self.leapyearcheck(year):
+                return 1 <= day <= 29
+            else:
+                return 1 <= day <= 28
+        else:
+            return 1 <= day <= 31
+
     # month check
+    def monthcheck(self, month):
+        # This function checks if the given month is valid.
+        # month: the month to check
+        return 1 <= month <= 12
+
     # year check
+    def yearcheck(self, year):
+        # This function checks if the given year is valid.
+        # year: the year to check
+        return 1900 <= year <= 2099
+
     # birthday check
-    def birthdate(self, birth):
+    def birthday(self, birth):
         if re.match(r'^\d{4}-\d{2}-\d{2}$', birth) and 1900 < int(birth[:4]) < 2020 and 0 < int(
                 birth[5:7]) < 13 and 0 < int(birth[8:10]) < 32:
             return True
@@ -84,8 +131,6 @@ class TheValidation:
         else:
             return False
 
-    # age check
-    # birthday check [make sure they are withing age range 0-150, valid date format from first function]
 
 # testing
 
