@@ -72,4 +72,6 @@ if __name__ == "__main__":
     #print(validator.rangecheck(23, 2, 60))
     #print(validator.prescheck(""))
 
+
     print(validator.usernamecheck("achl06."))
+
