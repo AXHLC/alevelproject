@@ -15,6 +15,7 @@ class tabs:
         self.accounts_menu = Menu(self.menubar, tearoff=False)
         self.accounts_menu.add_command(label='Settings', command=lambda: self.settings())
         self.menubar.add_cascade(label="Accounts", menu=self.accounts_menu )
+# pandas for chart design
 
         self.win.mainloop()
 
