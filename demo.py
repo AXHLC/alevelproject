@@ -12,21 +12,27 @@ class Menus:
         self.menubar = Menu(self.win)
         # this creates the bar for the menu
         self.win.config(menu=self.menubar)
+
+        # this is the mainloop for the window
         while True:
             if aors == 'coach':
                 self.coachmenu()
+                break
             elif aors == 'player':
                 self.playermenu()
+                break
             else:
                 print("Invalid input")
-                choice()
-
+                aors = choice()
 
         # Create 'Settings' menu
         self.settings_tab = Menu(self.menubar, tearoff=False)
         self.settings_tab.add_command(label='colours', command=lambda: self.colours())
         self.settings_tab.add_command(label='Fonts', command=lambda: self.fonts())
         self.menubar.add_cascade(label="Settings", menu=self.settings_tab)
+
+        self.win.mainloop()
+
 
     def coachmenu(self):
         # creates Accounts tab
@@ -44,7 +50,7 @@ class Menus:
         self.profile_tab.add_command(label='Set Targets', command=lambda: self.settargets())
         self.menubar.add_cascade(label="Profiles", menu=self.profile_tab)
 
-        self.win.mainloop()
+
 
     def playermenu(self):
 
@@ -55,7 +61,7 @@ class Menus:
         self.view_tab.add_command(label='My Targets', command=lambda: self.mytargets())
         self.menubar.add_cascade(label="View", menu=self.view_tab)
 
-        self.win.mainloop()
+
 
 
     def colours(self):
