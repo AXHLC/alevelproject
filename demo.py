@@ -12,6 +12,14 @@ class Menus:
         # this creates the bar for the menu
         self.win.config(menu=self.menubar)
 
+        if aors == 'Coach':
+            self.coachmenu()
+        elif aors == 'Player':
+            self.playermenu()
+        else:
+            print("Invalid input")
+            exit()
+
         # Create 'Settings' menu
         self.settings_tab = Menu(self.menubar, tearoff=False)
         self.settings_tab.add_command(label='colours', command=lambda: self.colours())
@@ -33,6 +41,17 @@ class Menus:
         self.profile_tab.add_command(label='Enter Performance', command=lambda: self.enterperf())
         self.profile_tab.add_command(label='Set Targets', command=lambda: self.settargets())
         self.menubar.add_cascade(label="Profiles", menu=self.profile_tab)
+
+        self.win.mainloop()
+
+    def playermenu(self):
+
+        # creates View tab
+        self.view_tab = Menu(self.menubar, tearoff=False)
+        self.view_tab.add_command(label='Current Level', command=lambda: self.current())
+        self.view_tab.add_command(label='Overall Level', command=lambda: self.overall())
+        self.view_tab.add_command(label='My Targets', command=lambda: self.mytargets())
+        self.menubar.add_cascade(label="View", menu=self.view_tab)
 
         self.win.mainloop()
 
@@ -61,11 +80,24 @@ class Menus:
     def enterperf(self):
         s = "Enter Performance"
         print("You have clicked " + s)
-
     def settargets(self):
         s = "Set Targets"
+        print("You have clicked " + s)
+    def current(self):
+        s = "Current Level"
+        print("You have clicked " + s)
+    def overall(self):
+        s = "Overall Level"
+        print("You have clicked " + s)
+    def mytargets(self):
+        s = "My Targets"
         print("You have clicked " + s)
 
 
 
-Menus('Coach').coachmenu()
+
+if __name__ == '__main__':
+    x = input("Enter 'admin' for admin menu or 'student' for student menu: ")
+    Menus(x)
+
+
