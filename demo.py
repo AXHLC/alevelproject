@@ -1,11 +1,12 @@
 import tkinter as tk
-from tkinter import Menu
+from tkinter import Tk, Menu, messagebox
 # pandas for chart designs
 class Menus:
     def __init__(self, aors):
         # 'aors' stands for admin or student
         # root window has been made a class variable
         self.win = tk.Tk()
+        self.win.geometry('800x600')
         # creates a window and made it a class variable
         self.win.title(aors)
         # set window title to what is passed in the class whether admin menu or student menu
@@ -16,9 +17,11 @@ class Menus:
         # this is the mainloop for the window
         while True:
             if aors == 'coach':
+                self.win.title('Coach')
                 self.coachmenu()
                 break
             elif aors == 'player':
+                self.win.title('Player')
                 self.playermenu()
                 break
             else:
@@ -29,6 +32,7 @@ class Menus:
         self.settings_tab = Menu(self.menubar, tearoff=False)
         self.settings_tab.add_command(label='colours', command=lambda: self.colours())
         self.settings_tab.add_command(label='Fonts', command=lambda: self.fonts())
+        self.settings_tab.add_command(label='Exit', command=self.win.destroy)
         self.menubar.add_cascade(label="Settings", menu=self.settings_tab)
 
         self.win.mainloop()
