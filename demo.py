@@ -3,6 +3,7 @@ from tkinter import Menu
 # pandas for chart designs
 class Menus:
     def __init__(self, aors):
+        # 'aors' stands for admin or student
         # root window has been made a class variable
         self.win = tk.Tk()
         # creates a window and made it a class variable
@@ -11,14 +12,15 @@ class Menus:
         self.menubar = Menu(self.win)
         # this creates the bar for the menu
         self.win.config(menu=self.menubar)
+        while True:
+            if aors == 'coach':
+                self.coachmenu()
+            elif aors == 'player':
+                self.playermenu()
+            else:
+                print("Invalid input")
+                choice()
 
-        if aors == 'Coach':
-            self.coachmenu()
-        elif aors == 'Player':
-            self.playermenu()
-        else:
-            print("Invalid input")
-            exit()
 
         # Create 'Settings' menu
         self.settings_tab = Menu(self.menubar, tearoff=False)
@@ -97,7 +99,9 @@ class Menus:
 
 
 if __name__ == '__main__':
-    x = input("Enter 'admin' for admin menu or 'student' for student menu: ")
-    Menus(x)
-
+    def choice():
+        x = input("Enter 'coach' for admin menu or 'player' for student menu: ")
+        return x
+    z = choice()
+    Menus(z)
 
