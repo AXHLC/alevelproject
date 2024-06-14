@@ -30,7 +30,15 @@ class Menus:
 
         # Create 'Settings' tab in coach and player menus
         self.settings_tab = Menu(self.menubar, tearoff=False)
-        self.settings_tab.add_command(label='colours', command=lambda: self.colours())
+
+        # Create 'colours' sub menu
+        self.colours_submenu = Menu(self.settings_tab, tearoff=0)
+        self.colours_submenu.add_command(label='Light Mode', command=lambda: self.lightmode())
+        self.colours_submenu.add_command(label='Dark Mode', command=lambda: self.darkmode())
+        self.colours_submenu.add_command(label='Contrast Mode', command=lambda: self.contrastmode())
+
+        # Settings tab with 'colours' sub menu
+        self.settings_tab.add_cascade(label='colours', menu=self.colours_submenu)
         self.settings_tab.add_command(label='Fonts', command=lambda: self.fonts())
         self.settings_tab.add_command(label='Exit', command=self.win.destroy)
         self.menubar.add_cascade(label="Settings", menu=self.settings_tab)
@@ -68,9 +76,16 @@ class Menus:
 
 
 
-    def colours(self):
-        s = "Colours"
+    def lightmode(self):
+        s = "Light Mode"
         print("You have clicked " + s)
+    def darkmode(self):
+        s = "Dark Mode"
+        print("You have clicked " + s)
+    def contrastmode(self):
+        s = "Contrast Mode"
+        print("You have clicked " + s)
+
     def fonts(self):
         s = "Fonts"
         print("You have clicked " + s)
