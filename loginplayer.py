@@ -1,1 +1,1 @@
-from loginadmin import loginuiadmin
+from login import loginuiadmin
