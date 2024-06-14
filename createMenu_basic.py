@@ -13,7 +13,7 @@ def basic():
     win.config(menu=menubar)
 
     # create a menu
-    accounts_menu = Menu(menubar, tearoff=False)
+    accounts_menu = Menu(menubar, tearoff=True)
     # if you set tearoff to True, you will get dashed line, ... try it
     # add a menu item to the menu
     # when the menu is clicked, it calls a function called clikMe()
