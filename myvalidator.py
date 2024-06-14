@@ -126,8 +126,7 @@ class TheValidation:
         pattern = r'[a-z]{3}'
         if len(username) <= 8 and re.search(pattern, username):
             return True
-        else:
-            return False
+        return False
 
 
 # testing
