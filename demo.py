@@ -28,7 +28,7 @@ class Menus:
                 print("Invalid input")
                 aors = choice()
 
-        # Create 'Settings' menu
+        # Create 'Settings' tab in coach and player menus
         self.settings_tab = Menu(self.menubar, tearoff=False)
         self.settings_tab.add_command(label='colours', command=lambda: self.colours())
         self.settings_tab.add_command(label='Fonts', command=lambda: self.fonts())
