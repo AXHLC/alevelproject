@@ -31,15 +31,21 @@ class Menus:
         # Create 'Settings' tab in coach and player menus
         self.settings_tab = Menu(self.menubar, tearoff=False)
 
-        # Create 'colours' sub menu
+        # Create 'colours' sub tab
         self.colours_submenu = Menu(self.settings_tab, tearoff=0)
         self.colours_submenu.add_command(label='Light Mode', command=lambda: self.lightmode())
         self.colours_submenu.add_command(label='Dark Mode', command=lambda: self.darkmode())
         self.colours_submenu.add_command(label='Contrast Mode', command=lambda: self.contrastmode())
 
+        # Create 'Fonts' sub tab
+        self.fonts_submenu = Menu(self.settings_tab, tearoff=0)
+        self.fonts_submenu.add_command(label='Arial')
+        self.fonts_submenu.add_command(label='Times New Roman')
+        self.fonts_submenu.add_command(label='Courier New')
+
         # Settings tab with 'colours' sub menu
         self.settings_tab.add_cascade(label='colours', menu=self.colours_submenu)
-        self.settings_tab.add_command(label='Fonts', command=lambda: self.fonts())
+        self.settings_tab.add_cascade(label='Fonts', menu=self.fonts_submenu)
         self.settings_tab.add_command(label='Exit', command=self.win.destroy)
         self.menubar.add_cascade(label="Settings", menu=self.settings_tab)
 
