@@ -36,8 +36,8 @@ class TheValidation:
 
     # password check
     def passcheck(self, password):
-        # Checks that the variable password has the characters necessary
-        return bool(re.search(r'(?=.*\d)(?=.*[A-Z])(?=.*[+?#£%&])', password))
+        # Checks that the variable password has at least one digit, one uppercase letter, one special character, and a minimum length of 8
+        return bool(re.search(r'^(?=.*\d)(?=.*[A-Z])(?=.*[+?#£%&]).{8,}$', password))
 
     # range check
     def rangecheck(self, number, lower, upper):
@@ -62,7 +62,13 @@ class TheValidation:
         # date can only be between the years 1900 and 2099
         pattern = r'^([0-2][0-9]|(3)[0-1])/(0?[1-9]|1[012])/((19|20)\d\d)$'
         if re.fullmatch(pattern, date):
-            return True
+            day, month, year = map(int, date.split('/'))
+            if self.monthcheck(month) and self.yearcheck(year):
+                if month == 2 and day == 29 and not self.leapyearcheck(year):
+                    return False
+                elif self.daycheck(day, month, year):
+                    return True
+            return False
         else:
             return False
 
@@ -136,7 +142,7 @@ if __name__ == "__main__":
     validator = TheValidation()
     # print(validator.lengthscheck("b3338", 10, 3))
     # print(validator.emailcheck("dirguh@dfklj.com"))
-    # print(validator.passcheck("t8hareeAnonu?ms"))
+    # print(validator.passcheck("thhhhhs"))
     # print(validator.rangecheck(23, 2, 60))
     # print(validator.prescheck(""))
     # print(validator.usernamecheck("achl06."))

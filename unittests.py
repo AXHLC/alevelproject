@@ -107,6 +107,127 @@ class testusernamecheck(unittest.TestCase):
         for user in invalid_usernames:
             # Tests invalid usernames
             self.assertFalse(self.validator.usernamecheck(user))
+
+class testpasscheck(unittest.TestCase):
+
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def validpass(self,):
+        valid_passwords = [
+            'MenuSir56&',
+            'Ahmed9%',
+            'Elyas8£',
+            'Benjamin7+',
+            'Gustavo6#',
+            'heLLOO5&',
+            'bYebYe4%',
+            'cAtipillar3£',
+            'Konichiwa2+',
+            'Thisisright1#',
+        ]
+
+        for password in valid_passwords:
+            # Tests valid passwords
+            self.assertTrue(self.validator.passcheck(password))
+
+    def invalidpass(self,):
+        invalid_passwords = [
+            'password1',
+            'ALLCAPS',
+            'nonumberscaps?',
+            'less6',
+            'plain',
+            'bob>?',
+            'El-y-12',
+            'fa778',
+            'AC',
+            '1',
+        ]
+
+        for password in invalid_passwords:
+            # Tests invalid passwords
+            self.assertFalse(self.validator.passcheck(password))
+
+class testrangecheck(unittest.TestCase):
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def test_range_lower_boundary(self):
+        self.assertTrue(self.validator.rangecheck(5, 5, 10), "Failed on lower boundary")
+
+    def test_range_upper_boundary(self):
+        self.assertTrue(self.validator.rangecheck(10, 5, 10), "Failed on upper boundary")
+
+    def test_range_within_range(self):
+        self.assertTrue(self.validator.rangecheck(7, 5, 10), "Failed within range")
+
+    def test_range_below_range(self):
+        self.assertFalse(self.validator.rangecheck(4, 5, 10), "Failed below range")
+
+    def test_range_above_range(self):
+        self.assertFalse(self.validator.rangecheck(11, 5, 10), "Failed above range")
+
+class testprescheck(unittest.TestCase):
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def test_pres_with_input(self):
+        self.assertTrue(self.validator.prescheck("Hello"), "Failed with input")
+
+    def test_pres_without_input(self):
+        self.assertFalse(self.validator.prescheck(""), "Failed without input")
+
+class testagecheck(unittest.TestCase):
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def test_age_valid_age(self):
+        self.assertTrue(self.validator.age("25"), "Failed with valid age")
+
+    def test_age_invalid_age(self):
+        self.assertFalse(self.validator.age("200"), "Failed with invalid age")
+
+    def test_age_non_numeric_input(self):
+        self.assertFalse(self.validator.age("twenty"), "Failed with non-numeric input")
+
+class testdatecheck(unittest.TestCase):
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def test_date_valid_date(self):
+        self.assertTrue(self.validator.datecheck("25/12/2020"), "Failed with valid date")
+
+    def test_date_invalid_date(self):
+        self.assertFalse(self.validator.datecheck("30/02/2020"), "Failed with invalid date")
+
+    def test_date_invalid_format(self):
+        self.assertFalse(self.validator.datecheck("2020/12/25"), "Failed with invalid format")
+class TestLeapYearCheck(unittest.TestCase):
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def test_leapyear_is_leap_year(self):
+        self.assertTrue(self.validator.leapyearcheck(2020), "Failed with leap year")
+
+    def test_leapyear_non_leap_year(self):
+        self.assertFalse(self.validator.leapyearcheck(2021), "Failed with non-leap year")
+class testdaycheck(unittest.TestCase):
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def test_day_valid_day(self):
+        self.assertTrue(self.validator.daycheck(15, 5, 2020))
+
+    def test_day_invalid_day(self):
+        self.assertFalse(self.validator.daycheck(31, 4, 2020))
+
+    def test_day_february_leap_year(self):
+        self.assertTrue(self.validator.daycheck(29, 2, 2020))
+
+    def test_day_february_non_leap_year(self):
+        self.assertFalse(self.validator.daycheck(29, 2, 2019))
+
 # testing
 if __name__ == '__main__':
     unittest.main()
