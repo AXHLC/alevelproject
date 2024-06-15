@@ -46,8 +46,6 @@ class TestEmailCheck(unittest.TestCase):
         for email in valid_emails:
             # Tests valid emails
             self.assertTrue(self.validator.emailcheck(email))
-
-
     def invalidemail(self):
         invalid_emails = [
             'plainaddress',
@@ -227,6 +225,57 @@ class testdaycheck(unittest.TestCase):
 
     def test_day_february_non_leap_year(self):
         self.assertFalse(self.validator.daycheck(29, 2, 2019))
+class testmonthcheck(unittest.TestCase):
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def test_month_valid_month(self):
+        self.assertTrue(self.validator.monthcheck(5))
+
+    def test_month_invalid_month(self):
+        self.assertFalse(self.validator.monthcheck(13))
+class testyearcheck(unittest.TestCase):
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def test_year_valid_year(self):
+        self.assertTrue(self.validator.yearcheck(2020))
+
+    def test_year_invalid_year(self):
+        self.assertFalse(self.validator.yearcheck(1899))
+
+    def test_year_future_year(self):
+        self.assertFalse(self.validator.yearcheck(2100))
+class testbirthdaycheck(unittest.TestCase):
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def test_birthday_valid_birthday(self):
+        self.assertTrue(self.validator.birthdaycheck("2000-05-15"))
+
+    def test_birthday_invalid_birthday(self):
+        self.assertFalse(self.validator.birthdaycheck("1899-04-31"))
+
+    def test_birthday_invalid_format(self):
+        self.assertFalse(self.validator.birthdaycheck("15/05/2000"))
+class testphonecheck(unittest.TestCase):
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def test_phone_valid_phone(self):
+        self.assertTrue(self.validator.phonecheck("+44 1234 567 890"))
+
+    def test_phone_invalid_phone(self):
+        self.assertFalse(self.validator.phonecheck("1234567890"))
+class testnamecheck(unittest.TestCase):
+    def setUp(self):
+        self.validator = TheValidation()
+
+    def test_name_valid_name(self):
+        self.assertTrue(self.validator.namecheck("Ahmed Chaal"))
+
+    def test_name_invalid_name(self):
+        self.assertFalse(self.validator.namecheck("Ahmed123"))
 
 # testing
 if __name__ == '__main__':

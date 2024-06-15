@@ -107,20 +107,20 @@ class TheValidation:
         return 1900 <= year <= 2099
 
     # birthday check
-    def birthday(self, birth):
+    def birthdaycheck(self, birth):
         if re.match(r'^\d{4}-\d{2}-\d{2}$', birth) and 1900 < int(birth[:4]) < 2020 and 0 < int(
                 birth[5:7]) < 13 and 0 < int(birth[8:10]) < 32:
             return True
         return False
 
     # phone check
-    def phone(self, contact):
+    def phonecheck(self, contact):
         # Checks weather the number is a valid UK phone number
         pattern = r'^(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|\(?0\d{3}\)?)\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|\(?0\d{2}\)?)\s?\d{4}\s?\d{4}))(\s?\#(\d{4}|\d{3}))?$'
         return bool(re.fullmatch(pattern, contact))
 
     # name check
-    def name(self, name):
+    def namecheck(self, name):
         pattern = r'^[a-zA-Z]+(?:[ -][a-zA-Z]+)*$'
         return bool(re.fullmatch(pattern, name))
 
