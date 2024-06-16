@@ -6,6 +6,7 @@ class Menus:
         # 'aors' stands for admin or student
         # root window has been made a class variable
         self.win = tk.Tk()
+        self.win.title(aors)
         self.win.geometry('800x600')
         # creates a window and made it a class variable
         self.win.title(aors)
