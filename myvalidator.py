@@ -108,7 +108,7 @@ class TheValidation:
 
     # birthday check
     def birthdaycheck(self, birth):
-        if re.match(r'^\d{4}-\d{2}-\d{2}$', birth) and 1900 < int(birth[:4]) < 2020 and 0 < int(
+        if re.match(r'^\d{4}/\d{2}/\d{2}$', birth) and 1900 < int(birth[:4]) < 2020 and 0 < int(
                 birth[5:7]) < 13 and 0 < int(birth[8:10]) < 32:
             return True
         return False

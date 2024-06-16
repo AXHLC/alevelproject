@@ -5,7 +5,7 @@ import unittest
 # -------------------MyValidator-------------------
 # running myvalidator.py from main.py
 validator = TheValidation()
-x = validator.lengthscheck("daddy", 5, 1)
+x = validator.lengthscheck("daddy", 3, 3)
 print(x)
 # -------------------------------------------------
 

@@ -201,7 +201,7 @@ class testdatecheck(unittest.TestCase):
 
     def test_date_invalid_format(self):
         self.assertFalse(self.validator.datecheck("2020/12/25"), "Failed with invalid format")
-class TestLeapYearCheck(unittest.TestCase):
+class testleapyearcheck(unittest.TestCase):
     def setUp(self):
         self.validator = TheValidation()
 
@@ -251,13 +251,13 @@ class testbirthdaycheck(unittest.TestCase):
         self.validator = TheValidation()
 
     def test_birthday_valid_birthday(self):
-        self.assertTrue(self.validator.birthdaycheck("2000-05-15"))
+        self.assertTrue(self.validator.birthdaycheck("2000/05/15"))
 
     def test_birthday_invalid_birthday(self):
-        self.assertFalse(self.validator.birthdaycheck("1899-04-31"))
+        self.assertFalse(self.validator.birthdaycheck("1899/04/31"))
 
     def test_birthday_invalid_format(self):
-        self.assertFalse(self.validator.birthdaycheck("15/05/2000"))
+        self.assertFalse(self.validator.birthdaycheck("15-05-2000"))
 class testphonecheck(unittest.TestCase):
     def setUp(self):
         self.validator = TheValidation()
