@@ -30,11 +30,11 @@ class passmanager:
 
     @staticmethod
     def randompassword():
+        validator = myvalidator.TheValidation()  # Create an instance of TheValidation class
         while True:
             password = ''.join(
                 random.choice(string.ascii_letters + string.digits + string.punctuation) for _ in range(8))
-            if myvalidator.thevalidation.passcheck(
-                    password):  # Assuming validator_password returns True if the password is valid
+            if validator.passcheck(password):  # Call passcheck method on the validator instance
                 return password
 
 
@@ -46,5 +46,9 @@ print(f"The hashed password is: {hashed_password}")
 entered_password = input("Enter the password again to verify: ")
 if passmanager.verify_password(salt, hashed_password, entered_password):
     print("The password is correct.")
+    randompassword = passmanager.randompassword()
+    print(f"Random password: {randompassword}")
 else:
     print("The password is incorrect.")
+    randompassword = passmanager.randompassword()
+    print(f"Random password: {randompassword}")
