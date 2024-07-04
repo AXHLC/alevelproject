@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import Tk, Menu, messagebox
 # pandas for chart designs
+
+
 class Menus:
     def __init__(self, aors):
         # 'aors' stands for admin or student
@@ -79,6 +81,8 @@ class Menus:
         self.view_tab.add_command(label='Overall Level', command=lambda: self.overall())
         self.view_tab.add_command(label='My Targets', command=lambda: self.mytargets())
         self.menubar.add_cascade(label="View", menu=self.view_tab)
+
+
 
 
 
