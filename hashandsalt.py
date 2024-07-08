@@ -5,6 +5,7 @@ import random
 import string
 import myvalidator
 
+
 class passmanager:
     @staticmethod
     def hash_password(password):
@@ -38,17 +39,19 @@ class passmanager:
                 return password
 
 
-password = input("Enter a password: ")
-salt, hashed_password = passmanager.hash_password(password)
-print(f"The salt is: {salt}")
-print(f"The hashed password is: {hashed_password}")
+if __name__ == '__main__':
 
-entered_password = input("Enter the password again to verify: ")
-if passmanager.verify_password(salt, hashed_password, entered_password):
-    print("The password is correct.")
-    randompassword = passmanager.randompassword()
-    print(f"Random password: {randompassword}")
-else:
-    print("The password is incorrect.")
-    randompassword = passmanager.randompassword()
-    print(f"Random password: {randompassword}")
+    password = input("Enter a password: ")
+    salt, hashed_password = passmanager.hash_password(password)
+    print(f"The salt is: {salt}")
+    print(f"The hashed password is: {hashed_password}")
+
+    entered_password = input("Enter the password again to verify: ")
+    if passmanager.verify_password(salt, hashed_password, entered_password):
+        print("The password is correct.")
+        randompassword = passmanager.randompassword()
+        print(f"Random password: {randompassword}")
+    else:
+        print("The password is incorrect.")
+        randompassword = passmanager.randompassword()
+        print(f"Random password: {randompassword}")
