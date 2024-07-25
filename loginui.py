@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import Tk, messagebox
 from adminplayerwindows import Menus
+import myvalidator as mv
+import hashandsalt as hs
 
 class loginui:
     def __init__(self, master):
@@ -44,7 +46,7 @@ class loginui:
         username = self.entry_username.get()
         password = self.entry_password.get()
         # Check if the username and password are correct
-        if username == 'Coach' and password == 'Coach':
+        if mv.TheValidation.usernamecheck(username) == True and mv.TheValidation.passcheck(password) == True:
             print('Login successful')
             self.master.destroy()
             menu = Menus('coach')
