@@ -3,7 +3,7 @@ import base64
 import os
 import random
 import string
-import myvalidator
+from modules import myvalidator
 
 
 class passmanager:

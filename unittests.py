@@ -1,5 +1,5 @@
 import unittest
-from myvalidator import TheValidation
+from modules.myvalidator import TheValidation
 
 # unit test on lengths check method
 class TestLengthsCheck(unittest.TestCase):

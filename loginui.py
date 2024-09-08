@@ -1,13 +1,16 @@
 import tkinter as tk
 from tkinter import Tk, messagebox
 from adminplayerwindows import Menus
-import myvalidator as mv
-import hashandsalt as hs
+from modules import myvalidator as mv
+
 
 class loginui:
-    def __init__(self, master):
+    def __init__(self):
         # Create the main application window
-        self.master = master
+        self.master = Tk()
+
+        # Disable resizing of the window
+        self.master.resizable(False, False)
         self.master.title('Login')
         self.master.geometry('400x250')
         # Create the validator object
@@ -15,6 +18,7 @@ class loginui:
         self.place_widgets()
         # Start the main loop
         self.master.mainloop()
+
 
     def create_widgets(self):
         # Create the widget for username
@@ -64,5 +68,5 @@ class loginui:
 
 if __name__ == '__main__':
     #Test the LoginUI class
-    root = Tk()
-    loginui(root)
+    # root = Tk()
+    loginui()
