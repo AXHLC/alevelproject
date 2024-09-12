@@ -1,5 +1,5 @@
 # testing
-from modules.myvalidator import TheValidation
+from myvalidator import TheValidation
 import unittest
 
 # -------------------MyValidator-------------------
