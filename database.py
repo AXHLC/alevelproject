@@ -52,16 +52,21 @@ class Database:
             ''')
             self.conn.commit()
     
-    def create_results_table(self):
+    def create_result_table(self):
         if self.conn:
             cursor = self.conn.cursor()
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS Results (
                 result_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 description TEXT NOT NULL,
-                level INTEGER NOT NULL);
+                level INTEGER NOT NULL,
+                player_id INTEGER,
+                skill_id INTEGER,
+                FOREIGN KEY (player_id) REFERENCES Players(player_id),
+                FOREIGN KEY (skill_id) REFERENCES Skills(skill_id)
+            );
             ''')
-            self.conn.commit()
+        self.conn.commit()
 
     def close(self):
         if self.conn:
@@ -74,4 +79,5 @@ if __name__ == "__main__":
     db.create_coach_table()
     db.create_player_table()
     db.create_skill_table()
+    db.create_result_table()
     db.close()
