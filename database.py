@@ -12,7 +12,7 @@ class Database:
         except sqlite3.Error as e:
             print(f"An error occurred: {e}")
 
-    def create_user_table(self):
+    def create_player_table(self):
         if self.conn:
             try:
                 cursor = self.conn.cursor()
@@ -41,6 +41,28 @@ class Database:
             ''')
             self.conn.commit()
 
+    def create_skill_table(self):
+        if self.conn:
+            cursor = self.conn.cursor()
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Skills (
+                skill_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                description TEXT NOT NULL,
+                level INTEGER NOT NULL);
+            ''')
+            self.conn.commit()
+    
+    def create_results_table(self):
+        if self.conn:
+            cursor = self.conn.cursor()
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Results (
+                result_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                description TEXT NOT NULL,
+                level INTEGER NOT NULL);
+            ''')
+            self.conn.commit()
+
     def close(self):
         if self.conn:
             self.conn.close()
@@ -50,5 +72,6 @@ if __name__ == "__main__":
     db = Database()
     db.connect()
     db.create_coach_table()
-    db.create_user_table()
+    db.create_player_table()
+    db.create_skill_table()
     db.close()
