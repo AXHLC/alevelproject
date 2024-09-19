@@ -119,15 +119,14 @@ class BaseWindow:
             widget.config(font=font)
             for child in widget.winfo_children():
                 child.config(font=font)
-    
 
 class CoachWindow(BaseWindow):
     def __init__(self):
         super().__init__('coach')
-        self.create_coach_window()
+        self.create_coach_menu()
         self.win.mainloop()
 
-    def create_coach_window(self):
+    def create_coach_menu(self):
         # creates Accounts tab
         self.accounts_tab = Menu(self.menubar, tearoff=False)
         self.accounts_tab.add_command(label='New', command=lambda: self.new())
@@ -146,13 +145,15 @@ class CoachWindow(BaseWindow):
         # Initialize settings tab last
         self.initialize_settings_tab()
 
+
+
 class PlayerWindow(BaseWindow):
     def __init__(self):
         super().__init__('player')
-        self.create_player_window()
+        self.create_player_menu()
         self.win.mainloop()
 
-    def create_player_window(self):
+    def create_player_menu(self):
 
         # creates View tab
         self.view_tab = Menu(self.menubar, tearoff=False)
@@ -170,10 +171,6 @@ class PlayerWindow(BaseWindow):
     
     
     
-
-    def fonts(self):
-        s = "Fonts"
-        print("You have clicked " + s)
     def new(self):
         s = "New"
         print("You have clicked " + s)
