@@ -34,15 +34,16 @@ class BaseWindow:
         
         # Create 'Fonts' sub tab
         self.fonts_submenu = Menu(self.settings_tab, tearoff=0)
-        self.fonts_submenu.add_command(label='Arial')
-        self.fonts_submenu.add_command(label='Times New Roman')
-        self.fonts_submenu.add_command(label='Courier New')
+        self.fonts_submenu.add_command(label='Arial', command=self.arial_font)
+        self.fonts_submenu.add_command(label='Times New Roman', command=self.times_font)
+        self.fonts_submenu.add_command(label='Courier New', command=self.courier_font)
+        self.fonts_submenu.add_command(label='Original', command=self.apply_font_original)
 
         # Create 'Colours' sub tab
         self.colours_submenu = Menu(self.settings_tab, tearoff=0)
         self.colours_submenu.add_command(label='Dark Mode', command=self.darkmode)
-        #self.colours_submenu.add_command(label='Light Mode', command=self.lightmode)
-        #self.colours_submenu.add_command(label='contrast Mode', command=self.contrastmode)
+        self.colours_submenu.add_command(label='Light Mode', command=self.lightmode)
+        self.colours_submenu.add_command(label='contrast Mode', command=self.contrastmode)
 
         # Add submenus to settings tab
         self.settings_tab.add_cascade(label='Colours', menu=self.colours_submenu)
@@ -59,8 +60,66 @@ class BaseWindow:
 
     def darkmode(self):
         self.apply_dark_mode()
-        s = "Dark Mode"
-        print("You have clicked " + s)
+    
+    def apply_light_mode(self):
+        # Change the background and foreground colors for light mode
+        self.win.config(bg='white')
+        self.menubar.config(bg='white', fg='black')
+        for menu in self.menubar.winfo_children():
+            menu.config(bg='white', fg='black')
+
+    def lightmode(self):
+        self.apply_light_mode()
+
+    def apply_font_original(self):
+        # Change the font to the original font
+        self.win.option_add("*Font", "TkDefaultFont")
+        self.update_all_widgets_font("TkDefaultFont")
+
+    def original_font(self):
+        self.apply_font_original()
+
+    def apply_contrast_mode(self):
+        # Change the background and foreground colors for high contrast mode
+        self.win.config(bg='yellow')
+        self.menubar.config(bg='yellow', fg='black')
+        for menu in self.menubar.winfo_children():
+            menu.config(bg='yellow', fg='black')
+    
+    def contrastmode(self):
+        self.apply_contrast_mode()
+    
+    def apply_font_arial(self):
+        # Change the font to Arial
+        self.win.option_add("*Font", "Arial 12")
+        self.update_all_widgets_font("Arial 12")
+    
+    def arial_font(self):
+        self.apply_font_arial()
+
+    def apply_font_times(self):
+        # Change the font to Times New Roman
+        self.win.option_add("*Font", "Times 12")
+        self.update_all_widgets_font("Times 12")
+
+    def times_font(self):
+        self.apply_font_times()
+
+    def apply_font_courier(self):
+        # Change the font to Courier New
+        self.win.option_add("*Font", "Courier 12")
+        self.update_all_widgets_font("Courier 12")
+    
+    def courier_font(self):
+        self.apply_font_courier()
+
+    def update_all_widgets_font(self, font):
+        # Update the font for all widgets in the window
+        for widget in self.win.winfo_children():
+            widget.config(font=font)
+            for child in widget.winfo_children():
+                child.config(font=font)
+    
 
 class CoachWindow(BaseWindow):
     def __init__(self):
@@ -108,13 +167,9 @@ class PlayerWindow(BaseWindow):
 
 
 
-    def lightmode(self):
-        s = "Light Mode"
-        print("You have clicked " + s)
     
-    def contrastmode(self):
-        s = "Contrast Mode"
-        print("You have clicked " + s)
+    
+    
 
     def fonts(self):
         s = "Fonts"
