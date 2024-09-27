@@ -18,7 +18,7 @@ class loginui:
         self.close_button = Button(master, text='Close', command=master.quit)
         self.forgot_password_button = Button(master, text='Forgot Password', command=self.forgot_password)
 
-         # Role selection
+        # Role selection
         self.role_var = StringVar(value='Coach')
         self.coach_radio = Radiobutton(master, text='Coach', variable=self.role_var, value='Coach')
         self.player_radio = Radiobutton(master, text='Player', variable=self.role_var, value='Player')

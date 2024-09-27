@@ -39,7 +39,6 @@ class Database:
             cursor = self.conn.cursor()
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS Results (
-                result_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER,
                 skill_id TEXT,
                 score INTEGER NOT NULL,
