@@ -110,7 +110,7 @@ class LoginApp:
 
     def register_user(self, first_name, last_name, password, role, window):
         if not self.validator.passcheck(password):
-            messagebox.showerror("Error", "Invalid password format")
+            messagebox.showerror("Error", "Invalid password format, min length of 8 one up one low and one special character")
             return
 
         try:
