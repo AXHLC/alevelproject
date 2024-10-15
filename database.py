@@ -112,7 +112,6 @@ class Database:
     def DeleteRecord(self, userid):
         conn = sqlite3.connect('basketball_tracker.db')
         conn.execute("DELETE FROM users WHERE  user_id=?",(userid ,) )
-    
         conn.commit()
         conn.close()
 
@@ -122,6 +121,6 @@ if __name__ == "__main__":
     #db.InsertData('jodoe', 'J', 'D', 'password', 'player')
     #db.InsertData('manjack', 'MAN', 'JACK', 'pass', 'player')
     #db.InsertData('juniroyal', 'Junior', 'royal', 'word', 'player')
-    db.UpdateUsername(6, 'juniroyal')
-    #db.DeleteRecord(5)
+    #db.UpdateUsername(6, 'juniroyal')
+    db.DeleteRecord(6)
     db.close()
