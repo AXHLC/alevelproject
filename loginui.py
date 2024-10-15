@@ -5,18 +5,19 @@ import myvalidator as mv
 
 
 class loginui:
-    def __init__(self, master):
-        self.master = master
-        self.master.title('Login')
-        self.master.geometry('400x300')
+    def __init__(self, parent):
+        self.parent = parent
+        self.parent.title('Login')
+        self.parent.geometry('400x300')
+        self.parent.resizable(False, False)
 
-        self.label_username = Label(master, text='Username:')
-        self.label_password = Label(master, text='Password:')
-        self.entry_username = Entry(master)
-        self.entry_password = Entry(master, show='*')
-        self.submit_button = Button(master, text='Submit', command=self.next_window)
-        self.close_button = Button(master, text='Close', command=master.quit)
-        self.forgot_password_button = Button(master, text='Forgot Password', command=self.forgot_password)
+        self.label_username = Label(parent, text='Username:')
+        self.label_password = Label(parent, text='Password:')
+        self.entry_username = Entry(parent)
+        self.entry_password = Entry(parent, show='*')
+        self.submit_button = Button(parent, text='Submit', command=self.next_window)
+        self.close_button = Button(parent, text='Close', command=parent.quit)
+        self.forgot_password_button = Button(parent, text='Forgot Password', command=self.forgot_password)
 
         # Place the username widget on the window
         self.label_username.place(x=50, y=50)
@@ -31,6 +32,28 @@ class loginui:
         self.submit_button.place(x=250, y=210)
         self.forgot_password_button.place(x=150, y=160)
     
+    def validate(self):
+        # Implement validation logic here
+        validator = mv.TheValidation()
+        username = self.entry_username.get()
+        password = self.entry_password.get()
+        if not validator.prescheck(username):
+            messagebox.showerror('Error', 'Username is required')
+            return False
+        if not validator.prescheck(password):
+            messagebox.showerror('Error', 'Password is required')
+            return False
+        if not validator.lengthscheck(username, 5, 5):
+            messagebox.showerror('Error', 'Username must 5 characters long')
+            return False
+        if not validator.usernamecheck(username):
+            messagebox.showerror('Error', 'Username must have at least 3 consecutive letters')
+            return False
+        if not validator.passcheck(password):
+            messagebox.showerror('Error', 'Password must contain at least one digit, one uppercase letter, and one special character')
+            return False
+        return True
+
     def forgot_password(self):
         # Implement forgot password logic here
         messagebox.showinfo('Forgot Password', 'Forgot password functionality is not implemented yet.')
@@ -40,6 +63,6 @@ class loginui:
 
 
 if __name__ == '__main__':
-    root = Tk()
-    login_ui = loginui(root)
-    root.mainloop()
+    parent = Tk()
+    login_ui = loginui(parent)
+    parent.mainloop()

@@ -18,9 +18,13 @@ class Database:
                 first_name TEXT NOT NULL,
                 last_name TEXT NOT NULL,
                 password TEXT NOT NULL,
-                role TEXT NOT NULL CHECK(role IN ('player', 'coach'))
+                role TEXT NOT NULL CHECK(role IN ('player', 'admin'))
             );
             ''')
+            admin_user = ('admin', 'Admin', 'User', 'adminpassword', 'admin')
+            cursor.execute('''
+            INSERT OR IGNORE INTO Users (username, first_name, last_name, password, role) VALUES (?, ?, ?, ?, ?)
+            ''', admin_user)
             self.conn.commit()
 
     def create_skills_table(self):
@@ -61,6 +65,15 @@ class Database:
             INSERT OR IGNORE INTO Skills (skill_id, skill_name) VALUES (?, ?)
             ''', skills)
             self.conn.commit()
+
+    #def insert_default_admin(self):
+        #if self.conn:
+            #cursor = self.conn.cursor()
+            #admin_user = ('admin', 'Admin', 'User', 'adminpassword', 'admin')
+            #cursor.execute('''
+            #INSERT OR IGNORE INTO Users (username, first_name, last_name, password, role) VALUES (?, ?, ?, ?, ?)
+            #''', admin_user)
+            #self.conn.commit()
 
     def close(self):
         if self.conn:
@@ -122,5 +135,6 @@ if __name__ == "__main__":
     #db.InsertData('manjack', 'MAN', 'JACK', 'pass', 'player')
     #db.InsertData('juniroyal', 'Junior', 'royal', 'word', 'player')
     #db.UpdateUsername(6, 'juniroyal')
-    db.DeleteRecord(6)
+    #db.DeleteRecord(6)
+    #db.insert_default_admin()
     db.close()
