@@ -43,8 +43,8 @@ class loginui:
         if not validator.prescheck(password):
             messagebox.showerror('Error', 'Password is required')
             return False
-        if not validator.lengthscheck(username, 5, 5):
-            messagebox.showerror('Error', 'Username must 5 characters long')
+        if not validator.lengthscheck(username, 8, 3):
+            messagebox.showerror('Error', 'Username must less than 8 characters long')
             return False
         if not validator.usernamecheck(username):
             messagebox.showerror('Error', 'Username must have at least 3 consecutive letters')
@@ -52,14 +52,26 @@ class loginui:
         if not validator.passcheck(password):
             messagebox.showerror('Error', 'Password must contain at least one digit, one uppercase letter, and one special character')
             return False
-        return True
-
+        else:
+            return True
+    
     def forgot_password(self):
         # Implement forgot password logic here
         messagebox.showinfo('Forgot Password', 'Forgot password functionality is not implemented yet.')
+        pass 
+
     def next_window(self):
-        # Implement new window logic here
-        messagebox.showinfo('New Window', 'New window functionality is not implemented yet.')   
+        if self.validate():
+            if self.entry_username.get() == 'admin' and self.entry_password.get() == 'AdminPassword123?':
+                messagebox.showinfo('Login', 'Login successful')
+                self.parent.destroy()
+                coach_window = CoachWindow()
+            elif self.entry_username.get() == 'player' and self.entry_password.get() == 'PlayerPassword123?':
+                messagebox.showinfo('Login', 'Login successful')
+                self.parent.destroy()
+                player_window = PlayerWindow()
+            else:
+                messagebox.showerror('Login', 'Invalid username or password') 
 
 
 if __name__ == '__main__':
