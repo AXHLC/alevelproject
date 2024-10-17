@@ -2,13 +2,14 @@ from tkinter import Tk, Label, Entry, Button, messagebox, Radiobutton, StringVar
 from tkinter import Tk, messagebox
 from adminplayerwindows import CoachWindow, PlayerWindow
 import myvalidator as mv
+import sqlite3
 
 
 class loginui:
     def __init__(self, parent):
         self.parent = parent
         self.parent.title('Login')
-        self.parent.geometry('400x300')
+        self.parent.geometry('480x300')
         self.parent.resizable(False, False)
 
         self.label_username = Label(parent, text='Username:')
@@ -20,17 +21,17 @@ class loginui:
         self.forgot_password_button = Button(parent, text='Forgot Password', command=self.forgot_password)
 
         # Place the username widget on the window
-        self.label_username.place(x=50, y=50)
-        self.entry_username.place(x=150, y=50)
+        self.label_username.place(x=120, y=50)
+        self.entry_username.place(x=190, y=50)
 
         # Place the password widget on the window
-        self.label_password.place(x=50, y=100)
-        self.entry_password.place(x=150, y=100)
+        self.label_password.place(x=120, y=100)
+        self.entry_password.place(x=190, y=100)
 
         # Place the submit and close buttons on the window
-        self.close_button.place(x=125, y=210)
-        self.submit_button.place(x=250, y=210)
-        self.forgot_password_button.place(x=150, y=160)
+        self.close_button.place(x=160, y=210)
+        self.submit_button.place(x=300, y=210)
+        self.forgot_password_button.place(x=200, y=160)
     
     def validate(self):
         # Implement validation logic here
@@ -62,17 +63,27 @@ class loginui:
 
     def next_window(self):
         if self.validate():
-            if self.entry_username.get() == 'admin' and self.entry_password.get() == 'AdminPassword123?':
-                messagebox.showinfo('Login', 'Login successful')
-                self.parent.destroy()
-                coach_window = CoachWindow()
-            elif self.entry_username.get() == 'player' and self.entry_password.get() == 'PlayerPassword123?':
-                messagebox.showinfo('Login', 'Login successful')
-                self.parent.destroy()
-                player_window = PlayerWindow()
+            username = self.entry_username.get()
+            password = self.entry_password.get()
+            conn = sqlite3.connect('basketball_tracker.db')
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM Users WHERE username=? AND password=?', (username, password))
+            user = cursor.fetchone()
+            conn.close()
+            if user:
+                role = user[5]
+                if role == 'admin':
+                    messagebox.showinfo('Login', 'Login successful')
+                    self.parent.destroy()
+                    coach_window = CoachWindow()
+                elif role == 'player':
+                    messagebox.showinfo('Login', 'Login successful')
+                    self.parent.destroy()
+                    player_window = PlayerWindow()
+                else:
+                    messagebox.showerror('Login', 'Invalid role')
             else:
-                messagebox.showerror('Login', 'Invalid username or password') 
-
+                messagebox.showerror('Login', 'Invalid username or password')
 
 if __name__ == '__main__':
     parent = Tk()

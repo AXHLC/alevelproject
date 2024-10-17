@@ -131,7 +131,7 @@ class Database:
 # Example usage
 if __name__ == "__main__":
     db = Database('basketball_tracker.db')
-    #db.InsertData('jodoe', 'J', 'D', 'password', 'player')
+    db.InsertData('player', 'Player', 'User', 'PlayerPassword123?', 'player')
     #db.InsertData('manjack', 'MAN', 'JACK', 'pass', 'player')
     #db.InsertData('juniroyal', 'Junior', 'royal', 'word', 'player')
     #db.UpdateUsername(6, 'juniroyal')
