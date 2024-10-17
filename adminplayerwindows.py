@@ -14,7 +14,7 @@ class BaseWindow:
         else:
             raise ValueError("Invalid role. Enter 'coach' for admin menu or 'player' for student menu.")
 
-        # Set the default window size
+        # Set the default window size with golden ratio 1.6
         self.win.geometry("1120x700")
 
         # Make the window unresizable
