@@ -81,10 +81,10 @@ class BaseWindow:
 
     def apply_contrast_mode(self):
         # Change the background and foreground colors for high contrast mode
-        self.win.config(bg='yellow')
-        self.menubar.config(bg='yellow', fg='black')
+        self.win.config(bg='#11189b')
+        self.menubar.config(bg='#11189b', fg='white')
         for menu in self.menubar.winfo_children():
-            menu.config(bg='yellow', fg='black')
+            menu.config(bg='#11189b', fg='white')
     
     def contrastmode(self):
         self.apply_contrast_mode()
