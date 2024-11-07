@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import Tk, Menu, messagebox
+from tkinter import Tk, Label, Entry, Button, messagebox, Listbox, Scrollbar, Menu, Toplevel
+import sqlite3
 # pandas for chart designs
 
 class BaseWindow:
@@ -34,10 +35,9 @@ class BaseWindow:
         
         # Create 'Fonts' sub tab
         self.fonts_submenu = Menu(self.settings_tab, tearoff=0)
-        self.fonts_submenu.add_command(label='Arial', command=self.arial_font)
-        self.fonts_submenu.add_command(label='Times New Roman', command=self.times_font)
-        self.fonts_submenu.add_command(label='Courier New', command=self.courier_font)
-        self.fonts_submenu.add_command(label='Original', command=self.apply_font_original)
+        fonts = ['Arial', 'Times New Roman', 'Courier New', 'Original']
+        for font in fonts:
+            self.fonts_submenu.add_command(label=font, command=lambda f=font: self.apply_font(f))
 
         # Create 'Colours' sub tab
         self.colours_submenu = Menu(self.settings_tab, tearoff=0)
@@ -123,10 +123,10 @@ class BaseWindow:
 class CoachWindow(BaseWindow):
     def __init__(self):
         super().__init__('coach')
-        self.create_coach_menu()
+        self.create_coach_tabs()
         self.win.mainloop()
 
-    def create_coach_menu(self):
+    def create_coach_tabs(self):
         # creates Accounts tab
         self.accounts_tab = Menu(self.menubar, tearoff=False)
         self.accounts_tab.add_command(label='New', command=lambda: self.new())
@@ -141,19 +141,114 @@ class CoachWindow(BaseWindow):
         self.profile_tab.add_command(label='Enter Performance', command=lambda: self.enterperf())
         self.profile_tab.add_command(label='Set Targets', command=lambda: self.settargets())
         self.menubar.add_cascade(label="Profiles", menu=self.profile_tab)
-
+        
         # Initialize settings tab last
         self.initialize_settings_tab()
+    
+    def create_search_player_section(self):
+        # Define the font with size increased by a factor of 1.5
+        base_font_size = 10
+        larger_font = ('Helvetica', int(base_font_size * 1.5))
+
+        # Create labels and entry widgets for player search
+        Label(self.win, text='Search Player by Username:', font=larger_font).place(x=50, y=50)
+        self.username_entry = Entry(self.win, font=larger_font)
+        self.username_entry.place(x=300, y=50, width=200)
+
+        # Bind the Enter key to the search function
+        self.username_entry.bind('<Return>', self.search_player_by_username)
+
+        # Create a button to search for the player
+        search_button = Button(self.win, text='Search', font=larger_font, command=self.search_player_by_username)
+        search_button.place(x=250, y=100)
+
+    def search_player_by_username(self, event=None):
+        username = self.username_entry.get()
+        # Query the database for the player with the matching username
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM Users WHERE username=?', (username,))
+        player = cursor.fetchone()
+        conn.close()
+
+        if player:
+            self.open_profile_window(player)
+        else:
+            messagebox.showerror('Error', 'Player not found')
+
+    def open_profile_window(self, player):
+        # Create a new window to display the player's profile
+        profile_window = Toplevel(self.win)
+        profile_window.title('Profile')
+        profile_window.geometry('400x300')
+
+        # Define the font with size increased by a factor of 1.5
+        base_font_size = 10
+        larger_font = ('Helvetica', int(base_font_size * 1.5))
+
+        # Display the player's details
+        Label(profile_window, text=f"Username: {player[1]}", font=larger_font).pack(pady=10)
+        Label(profile_window, text=f"First Name: {player[2]}", font=larger_font).pack(pady=10)
+        Label(profile_window, text=f"Last Name: {player[3]}", font=larger_font).pack(pady=10)
+        Label(profile_window, text=f"Role: {player[5]}", font=larger_font).pack(pady=10)
+
+    def new(self):
+        # Create a new window for adding a new player
+        new_player_window = Toplevel(self.win)
+        new_player_window.title('Add New Player')
+        new_player_window.geometry('400x300')
+
+        # Define the font with size increased by a factor of 1.5
+        base_font_size = 10
+        larger_font = ('Helvetica', int(base_font_size * 1.5))
+
+        # Create labels and entry widgets for player details
+        Label(new_player_window, text='Username:', font=larger_font).grid(row=0, column=0, padx=10, pady=10)
+        username_entry = Entry(new_player_window, font=larger_font)
+        username_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        Label(new_player_window, text='First Name:', font=larger_font).grid(row=1, column=0, padx=10, pady=10)
+        first_name_entry = Entry(new_player_window, font=larger_font)
+        first_name_entry.grid(row=1, column=1, padx=10, pady=10)
+
+        Label(new_player_window, text='Last Name:', font=larger_font).grid(row=2, column=0, padx=10, pady=10)
+        last_name_entry = Entry(new_player_window, font=larger_font)
+        last_name_entry.grid(row=2, column=1, padx=10, pady=10)
+
+        Label(new_player_window, text='Password:', font=larger_font).grid(row=3, column=0, padx=10, pady=10)
+        password_entry = Entry(new_player_window, show='*', font=larger_font)
+        password_entry.grid(row=3, column=1, padx=10, pady=10)
+
+        Label(new_player_window, text='Role:', font=larger_font).grid(row=4, column=0, padx=10, pady=10)
+        role_entry = Entry(new_player_window, font=larger_font)
+        role_entry.grid(row=4, column=1, padx=10, pady=10)
+
+        # Create a button to save the new player
+        save_button = Button(new_player_window, text='Save', font=larger_font, command=lambda: self.save_new_player(username_entry.get(), first_name_entry.get(), last_name_entry.get(), password_entry.get(), role_entry.get(), new_player_window))
+        save_button.grid(row=5, column=0, columnspan=2, pady=20)
+
+    def save_new_player(self, username, first_name, last_name, password, role, window):
+        # Insert the new player into the database
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO Users (username, first_name, last_name, password, role)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (username, first_name, last_name, password, role))
+        conn.commit()
+        conn.close()
+        messagebox.showinfo('Success', 'New player added successfully')
+        window.destroy()
 
 
 
 class PlayerWindow(BaseWindow):
     def __init__(self):
         super().__init__('player')
-        self.create_player_menu()
+        self.create_player_tabs()
         self.win.mainloop()
 
-    def create_player_menu(self):
+    def create_player_tabs(self):
 
         # creates View tab
         self.view_tab = Menu(self.menubar, tearoff=False)
@@ -209,7 +304,7 @@ if __name__ == '__main__':
     role = input("Enter 'coach' for admin menu or 'player' for student menu: ").strip().lower()
     try:
         if role == 'coach':
-            CoachWindow()
+            window = CoachWindow()
         elif role == 'player':
             PlayerWindow()
         else:
