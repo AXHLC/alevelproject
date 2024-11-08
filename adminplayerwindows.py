@@ -35,9 +35,10 @@ class BaseWindow:
         
         # Create 'Fonts' sub tab
         self.fonts_submenu = Menu(self.settings_tab, tearoff=0)
-        fonts = ['Arial', 'Times New Roman', 'Courier New', 'Original']
-        for font in fonts:
-            self.fonts_submenu.add_command(label=font, command=lambda f=font: self.apply_font(f))
+        self.fonts_submenu.add_command(label='Arial', command=self.arial_font)
+        self.fonts_submenu.add_command(label='Times New Roman', command=self.times_font)
+        self.fonts_submenu.add_command(label='Courier New', command=self.courier_font)
+        self.fonts_submenu.add_command(label='Original', command=self.apply_font_original)
 
         # Create 'Colours' sub tab
         self.colours_submenu = Menu(self.settings_tab, tearoff=0)
