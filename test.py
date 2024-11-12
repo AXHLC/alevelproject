@@ -1,11 +1,12 @@
-from tkinter import Tk, Label, Entry, Button, messagebox, Listbox, Scrollbar, Menu, Toplevel
+from tkinter import Tk, Label, Entry, Button, messagebox, Menu, Toplevel
+from tkinter import ttk
 import sqlite3
 
 class BaseWindow:
     def __init__(self, role):
         self.win = Tk()
         self.win.title(f'{role.capitalize()} Dashboard')
-        self.win.geometry('600x400')
+        self.win.geometry('600x600')
         self.win.resizable(False, False)
         self.menubar = Menu(self.win)
         self.win.config(menu=self.menubar)
@@ -57,26 +58,34 @@ class BaseWindow:
 class CoachWindow(BaseWindow):
     def __init__(self):
         super().__init__('coach')
-        self.create_coach_tabs()
+        self.create_notebook()
         self.create_search_player_section()
         self.win.mainloop()
 
-    def create_coach_tabs(self):
-        # creates Accounts tab
-        self.accounts_tab = Menu(self.menubar, tearoff=False)
-        self.accounts_tab.add_command(label='New', command=lambda: self.new())
-        self.accounts_tab.add_command(label='Update', command=lambda: self.update())
-        self.accounts_tab.add_command(label='Remove', command=lambda: self.remove())
-        self.accounts_tab.add_command(label='Change Password', command=lambda: self.changepass())
-        self.menubar.add_cascade(label="Accounts", menu=self.accounts_tab)
+    def create_notebook(self):
+        # Create a notebook widget
+        self.notebook = ttk.Notebook(self.win)
+        self.notebook.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky='nsew')
 
-        # creates profile management tab
-        self.profile_tab = Menu(self.menubar, tearoff=False)
-        self.profile_tab.add_command(label='View Profile', command=lambda: self.viewprofile())
-        self.profile_tab.add_command(label='Enter Performance', command=lambda: self.enterperf())
-        self.profile_tab.add_command(label='Set Targets', command=lambda: self.settargets())
-        self.menubar.add_cascade(label="Profiles", menu=self.profile_tab)
-        
+        # Create frames for Accounts and Profiles
+        self.accounts_frame = ttk.Frame(self.notebook)
+        self.profiles_frame = ttk.Frame(self.notebook)
+
+        # Add frames to the notebook as tabs
+        self.notebook.add(self.accounts_frame, text='Accounts')
+        self.notebook.add(self.profiles_frame, text='Profiles')
+
+        # Add content to the Accounts tab
+        Button(self.accounts_frame, text='New', command=self.new).grid(row=0, column=0, padx=10, pady=10)
+        Button(self.accounts_frame, text='Update', command=self.update).grid(row=1, column=0, padx=10, pady=10)
+        Button(self.accounts_frame, text='Remove', command=self.remove).grid(row=2, column=0, padx=10, pady=10)
+        Button(self.accounts_frame, text='Change Password', command=self.changepass).grid(row=3, column=0, padx=10, pady=10)
+
+        # Add content to the Profiles tab
+        Button(self.profiles_frame, text='View Profile', command=self.viewprofile).grid(row=0, column=0, padx=10, pady=10)
+        Button(self.profiles_frame, text='Enter Performance', command=self.enterperf).grid(row=1, column=0, padx=10, pady=10)
+        Button(self.profiles_frame, text='Set Targets', command=self.settargets).grid(row=2, column=0, padx=10, pady=10)
+
         # Initialize settings tab last
         self.initialize_settings_tab()
 
@@ -86,16 +95,16 @@ class CoachWindow(BaseWindow):
         larger_font = ('Helvetica', int(base_font_size * 1.5))
 
         # Create labels and entry widgets for player search
-        Label(self.win, text='Search Player by Username:', font=larger_font).place(x=50, y=50)
+        Label(self.win, text='Search Player by Username:', font=larger_font).grid(row=0, column=0, padx=10, pady=10, sticky='e')
         self.username_entry = Entry(self.win, font=larger_font)
-        self.username_entry.place(x=300, y=50, width=200)
+        self.username_entry.grid(row=0, column=1, padx=10, pady=10, sticky='w')
 
         # Bind the Enter key to the search function
         self.username_entry.bind('<Return>', self.search_player_by_username)
 
         # Create a button to search for the player
         search_button = Button(self.win, text='Search', font=larger_font, command=self.search_player_by_username)
-        search_button.place(x=250, y=100)
+        search_button.grid(row=1, column=0, columnspan=2, pady=10)
 
     def search_player_by_username(self, event=None):
         username = self.username_entry.get()
