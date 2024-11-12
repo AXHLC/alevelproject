@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Entry, Button, messagebox, Menu, Toplevel
+from tkinter import Tk, Label, Entry, Button, messagebox, Menu, Toplevel, Frame, Text
 from tkinter import ttk
 import sqlite3
 
@@ -6,108 +6,157 @@ class BaseWindow:
     def __init__(self, role):
         self.win = Tk()
         self.win.title(f'{role.capitalize()} Dashboard')
-        self.win.geometry('600x600')
+        self.win.geometry('1120x700')
         self.win.resizable(False, False)
-        self.menubar = Menu(self.win)
-        self.win.config(menu=self.menubar)
 
     def initialize_settings_tab(self):
-        # creates Settings tab
-        self.settings_tab = Menu(self.menubar, tearoff=False)
-        
-        # Create 'Fonts' sub tab
-        self.fonts_submenu = Menu(self.settings_tab, tearoff=0)
-        self.fonts_submenu.add_command(label='Arial', command=self.arial_font)
-        self.fonts_submenu.add_command(label='Times New Roman', command=self.times_font)
-        self.fonts_submenu.add_command(label='Courier New', command=self.courier_font)
-        self.fonts_submenu.add_command(label='Original', command=self.apply_font_original)
+        # Create frames for Fonts and Colours sections
+        fonts_frame = Frame(self.settings_frame)
+        fonts_frame.pack(side='left', fill='both', expand=True, padx=20, pady=20)
+        colours_frame = Frame(self.settings_frame)
+        colours_frame.pack(side='right', fill='both', expand=True, padx=20, pady=20)
 
-        # Create 'Colours' sub tab
-        self.colours_submenu = Menu(self.settings_tab, tearoff=0)
-        self.colours_submenu.add_command(label='Dark Mode', command=self.darkmode)
-        self.colours_submenu.add_command(label='Light Mode', command=self.lightmode)
-        self.colours_submenu.add_command(label='Contrast Mode', command=self.contrastmode)
+        # Create buttons for Fonts section
+        Label(fonts_frame, text='Fonts', font=('Helvetica', 16, 'bold')).pack(pady=10)
+        Button(fonts_frame, text='Arial', command=self.arial_font).pack(pady=10, anchor='center')
+        Button(fonts_frame, text='Times New Roman', command=self.times_font).pack(pady=10, anchor='center')
+        Button(fonts_frame, text='Courier New', command=self.courier_font).pack(pady=10, anchor='center')
+        Button(fonts_frame, text='Original', command=self.apply_font_original).pack(pady=10, anchor='center')
 
-        # Add submenus to settings tab
-        self.settings_tab.add_cascade(label='Colours', menu=self.colours_submenu)
-        self.settings_tab.add_cascade(label='Fonts', menu=self.fonts_submenu)
-        self.settings_tab.add_command(label='Exit', command=self.win.destroy)
-        self.menubar.add_cascade(label="Settings", menu=self.settings_tab)
+        # Create buttons for Colours section
+        Label(colours_frame, text='Colours', font=('Helvetica', 16, 'bold')).pack(pady=10)
+        Button(colours_frame, text='Dark Mode', command=self.darkmode).pack(pady=10, anchor='center')
+        Button(colours_frame, text='Light Mode', command=self.lightmode).pack(pady=10, anchor='center')
+        Button(colours_frame, text='Contrast Mode', command=self.contrastmode).pack(pady=10, anchor='center')
+
+        # Create Exit button
+        Button(self.settings_frame, text='Exit', command=self.win.destroy).pack(pady=10, anchor='center')
 
     def arial_font(self):
-        pass
+        self.apply_font_arial()
+
+    def apply_font_arial(self):
+        self.update_all_widgets_font("Arial 12")
 
     def times_font(self):
-        pass
+        self.apply_font_times()
+
+    def apply_font_times(self):
+        self.update_all_widgets_font("Times 12")
 
     def courier_font(self):
-        pass
+        self.apply_font_courier()
+
+    def apply_font_courier(self):
+        self.update_all_widgets_font("Courier 12")
 
     def apply_font_original(self):
-        pass
+        self.update_all_widgets_font("Helvetica 10")
 
     def darkmode(self):
-        pass
+        self.apply_dark_mode()
+
+    def apply_dark_mode(self):
+        self.win.config(bg='black')
+        self.menubar.config(bg='black', fg='white')
+        for menu in self.menubar.winfo_children():
+            menu.config(bg='black', fg='white')
+        self.update_all_widgets_color('black', 'white')
 
     def lightmode(self):
-        pass
+        self.apply_light_mode()
+
+    def apply_light_mode(self):
+        self.win.config(bg='white')
+        self.menubar.config(bg='white', fg='black')
+        for menu in self.menubar.winfo_children():
+            menu.config(bg='white', fg='black')
+        self.update_all_widgets_color('white', 'black')
 
     def contrastmode(self):
-        pass
+        self.apply_contrast_mode()
+
+    def apply_contrast_mode(self):
+        self.win.config(bg='#11189b')
+        self.menubar.config(bg='#11189b', fg='white')
+        for menu in self.menubar.winfo_children():
+            menu.config(bg='#11189b', fg='white')
+        self.update_all_widgets_color('#11189b', 'white')
+
+    def update_all_widgets_color(self, bg, fg):
+        # Update the background and foreground color for all widgets in the window
+        for widget in self.win.winfo_children():
+            if isinstance(widget, (Label, Button, Entry, Text, ttk.Notebook)):
+                widget.config(bg=bg, fg=fg)
+            for child in widget.winfo_children():
+                if isinstance(child, (Label, Button, Entry, Text, ttk.Notebook)):
+                    child.config(bg=bg, fg=fg)
+
+    def update_all_widgets_font(self, font):
+        # Update the font for all widgets in the window
+        for widget in self.win.winfo_children():
+            if isinstance(widget, (Label, Button, Entry, Text, ttk.Notebook)):
+                widget.config(font=font)
+            for child in widget.winfo_children():
+                if isinstance(child, (Label, Button, Entry, Text, ttk.Notebook)):
+                    child.config(font=font)
 
 class CoachWindow(BaseWindow):
     def __init__(self):
         super().__init__('coach')
         self.create_notebook()
-        self.create_search_player_section()
         self.win.mainloop()
 
     def create_notebook(self):
         # Create a notebook widget
         self.notebook = ttk.Notebook(self.win)
-        self.notebook.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky='nsew')
+        self.notebook.pack(expand=True, fill='both', padx=10, pady=10)
 
-        # Create frames for Accounts and Profiles
+        # Create frames for Accounts, Profiles, and Settings
         self.accounts_frame = ttk.Frame(self.notebook)
         self.profiles_frame = ttk.Frame(self.notebook)
+        self.settings_frame = ttk.Frame(self.notebook)
 
         # Add frames to the notebook as tabs
         self.notebook.add(self.accounts_frame, text='Accounts')
         self.notebook.add(self.profiles_frame, text='Profiles')
+        self.notebook.add(self.settings_frame, text='Settings')
 
         # Add content to the Accounts tab
-        Button(self.accounts_frame, text='New', command=self.new).grid(row=0, column=0, padx=10, pady=10)
-        Button(self.accounts_frame, text='Update', command=self.update).grid(row=1, column=0, padx=10, pady=10)
-        Button(self.accounts_frame, text='Remove', command=self.remove).grid(row=2, column=0, padx=10, pady=10)
-        Button(self.accounts_frame, text='Change Password', command=self.changepass).grid(row=3, column=0, padx=10, pady=10)
+        self.create_search_player_section(self.accounts_frame)
+        Button(self.accounts_frame, text='New', command=self.new).pack(pady=10, anchor='center')
+        Button(self.accounts_frame, text='Update', command=self.update).pack(pady=10, anchor='center')
+        Button(self.accounts_frame, text='Remove', command=self.remove).pack(pady=10, anchor='center')
+        Button(self.accounts_frame, text='Change Password', command=self.changepass).pack(pady=10, anchor='center')
 
         # Add content to the Profiles tab
-        Button(self.profiles_frame, text='View Profile', command=self.viewprofile).grid(row=0, column=0, padx=10, pady=10)
-        Button(self.profiles_frame, text='Enter Performance', command=self.enterperf).grid(row=1, column=0, padx=10, pady=10)
-        Button(self.profiles_frame, text='Set Targets', command=self.settargets).grid(row=2, column=0, padx=10, pady=10)
+        self.create_search_player_section(self.profiles_frame)
+        Button(self.profiles_frame, text='View Profile', command=self.viewprofile).pack(pady=10, anchor='center')
+        Button(self.profiles_frame, text='Enter Performance', command=self.enterperf).pack(pady=10, anchor='center')
+        Button(self.profiles_frame, text='Set Targets', command=self.settargets).pack(pady=10, anchor='center')
 
         # Initialize settings tab last
         self.initialize_settings_tab()
 
-    def create_search_player_section(self):
+    def create_search_player_section(self, parent):
         # Define the font with size increased by a factor of 1.5
         base_font_size = 10
         larger_font = ('Helvetica', int(base_font_size * 1.5))
 
         # Create labels and entry widgets for player search
-        Label(self.win, text='Search Player by Username:', font=larger_font).grid(row=0, column=0, padx=10, pady=10, sticky='e')
-        self.username_entry = Entry(self.win, font=larger_font)
-        self.username_entry.grid(row=0, column=1, padx=10, pady=10, sticky='w')
+        Label(parent, text='Search Player by Username:', font=larger_font).pack(pady=10, anchor='center')
+        username_entry = Entry(parent, font=larger_font)
+        username_entry.pack(pady=10, anchor='center')
 
         # Bind the Enter key to the search function
-        self.username_entry.bind('<Return>', self.search_player_by_username)
+        username_entry.bind('<Return>', lambda event: self.search_player_by_username(username_entry))
 
         # Create a button to search for the player
-        search_button = Button(self.win, text='Search', font=larger_font, command=self.search_player_by_username)
-        search_button.grid(row=1, column=0, columnspan=2, pady=10)
+        search_button = Button(parent, text='Search', font=larger_font, command=lambda: self.search_player_by_username(username_entry))
+        search_button.pack(pady=10, anchor='center')
 
-    def search_player_by_username(self, event=None):
-        username = self.username_entry.get()
+    def search_player_by_username(self, username_entry):
+        username = username_entry.get()
         # Query the database for the player with the matching username
         conn = sqlite3.connect('basketball_tracker.db')
         cursor = conn.cursor()
@@ -208,5 +257,53 @@ class CoachWindow(BaseWindow):
         s = "Set Targets"
         print("You have clicked " + s)
 
+class PlayerWindow(BaseWindow):
+    def __init__(self):
+        super().__init__('player')
+        self.create_player_tabs()
+        self.win.mainloop()
+
+    def create_player_tabs(self):
+        # Create a notebook widget
+        self.notebook = ttk.Notebook(self.win)
+        self.notebook.pack(expand=True, fill='both', padx=10, pady=10)
+
+        # Create frames for View and Settings
+        self.view_frame = ttk.Frame(self.notebook)
+        self.settings_frame = ttk.Frame(self.notebook)
+
+        # Add frames to the notebook as tabs
+        self.notebook.add(self.view_frame, text='View')
+        self.notebook.add(self.settings_frame, text='Settings')
+
+        # Add content to the View tab
+        Button(self.view_frame, text='Current Level', command=self.current).pack(pady=10, anchor='center')
+        Button(self.view_frame, text='Overall Level', command=self.overall).pack(pady=10, anchor='center')
+        Button(self.view_frame, text='My Targets', command=self.mytargets).pack(pady=10, anchor='center')
+
+        # Initialize settings tab last
+        self.initialize_settings_tab()
+
+    def current(self):
+        s = "Current Level"
+        print("You have clicked " + s)
+
+    def overall(self):
+        s = "Overall Level"
+        print("You have clicked " + s)
+
+    def mytargets(self):
+        s = "My Targets"
+        print("You have clicked " + s)
+
 if __name__ == '__main__':
-    coach_window = CoachWindow()
+    role = input("Enter 'coach' for admin menu or 'player' for student menu: ").strip().lower()
+    try:
+        if role == 'coach':
+            window = CoachWindow()
+        elif role == 'player':
+            PlayerWindow()
+        else:
+            raise ValueError("Invalid role. Enter 'coach' for admin menu or 'player' for student menu.")
+    except ValueError as e:
+        print(e)
