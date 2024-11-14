@@ -1,5 +1,6 @@
 from tkinter import Tk, Label, Entry, Button, messagebox, Menu, Toplevel, Frame
 from tkinter import ttk
+from datetime import datetime
 import sqlite3
 
 class BaseWindow:
@@ -268,8 +269,127 @@ class CoachWindow(BaseWindow):
         print("You have clicked " + s)
 
     def enterperf(self):
-        s = "Enter Performance"
-        print("You have clicked " + s)
+        # Retrieve all player user_ids and usernames from the database
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_id, username FROM Users WHERE role='player'")
+        self.players = cursor.fetchall()  # List of tuples: (user_id, username)
+        
+        # Retrieve skill_ids for shooting, dribbling, and passing
+        cursor.execute("SELECT skill_id, skill_name FROM Skills WHERE skill_name IN ('shooting', 'dribbling', 'passing')")
+        skills = cursor.fetchall()  # List of tuples: (skill_id, skill_name)
+        conn.close()
+        
+        # Create a dictionary to map skill_name to skill_id
+        self.skill_ids = {skill_name: skill_id for skill_id, skill_name in skills}
+
+        self.player_index = 0  # Initialize index to keep track of current player
+
+        # Initialize performance entry window
+        self.perf_window = Toplevel(self.win)
+        self.perf_window.title('Enter Performance')
+        self.perf_window.geometry('400x300')
+
+        self.performance_data = []  # List to store performance data
+
+        self.display_performance_entry()
+
+    def display_performance_entry(self):
+        # Clear the window
+        for widget in self.perf_window.winfo_children():
+            widget.destroy()
+
+        # Get current player's user_id and username
+        user_id, username = self.players[self.player_index]
+        
+        # Display player's username
+        Label(self.perf_window, text=f"Enter Performance for {username}", font=('Helvetica', 14, 'bold')).pack(pady=10)
+
+        # Create entry fields for scores
+        Label(self.perf_window, text='Shooting (out of 10):').pack()
+        self.shooting_entry = Entry(self.perf_window)
+        self.shooting_entry.pack()
+
+        Label(self.perf_window, text='Dribbling (out of 10):').pack()
+        self.dribbling_entry = Entry(self.perf_window)
+        self.dribbling_entry.pack()
+
+        Label(self.perf_window, text='Passing (out of 10):').pack()
+        self.passing_entry = Entry(self.perf_window)
+        self.passing_entry.pack()
+
+        # Determine if this is the last player
+        if self.player_index < len(self.players) - 1:
+            # Show NEXT button
+            Button(self.perf_window, text='NEXT', command=self.save_and_next).pack(pady=20)
+        else:
+            # Show DONE button
+            Button(self.perf_window, text='DONE', command=self.save_and_finish).pack(pady=20)
+
+    def save_and_next(self):
+        if self.save_performance_data():
+            # Move to next player
+            self.player_index += 1
+            self.display_performance_entry()
+
+    def save_and_finish(self):
+        if self.save_performance_data():
+            # All data collected; save to database
+            self.save_all_performance_data()
+            self.perf_window.destroy()
+            messagebox.showinfo('Success', 'Performance data saved successfully.')
+
+    def save_performance_data(self):
+        # Get entered scores
+        shooting = self.shooting_entry.get()
+        dribbling = self.dribbling_entry.get()
+        passing = self.passing_entry.get()
+
+        # Validate inputs
+        if not (shooting.isdigit() and dribbling.isdigit() and passing.isdigit()):
+            messagebox.showerror('Error', 'Please enter valid numeric scores between 0 and 10.')
+            return False
+        if not (0 <= int(shooting) <= 10 and 0 <= int(dribbling) <= 10 and 0 <= int(passing) <= 10):
+            messagebox.showerror('Error', 'Scores must be between 0 and 10.')
+            return False
+
+        # Get current player's user_id
+        user_id, username = self.players[self.player_index]
+
+        # Append data to performance_data list for each skill
+        self.performance_data.append({
+            'user_id': user_id,
+            'skill_id': self.skill_ids['shooting'],
+            'score': int(shooting),
+            'date': datetime.now().strftime('%Y-%m-%d')
+        })
+        self.performance_data.append({
+            'user_id': user_id,
+            'skill_id': self.skill_ids['dribbling'],
+            'score': int(dribbling),
+            'date': datetime.now().strftime('%Y-%m-%d')
+        })
+        self.performance_data.append({
+            'user_id': user_id,
+            'skill_id': self.skill_ids['passing'],
+            'score': int(passing),
+            'date': datetime.now().strftime('%Y-%m-%d')
+        })
+
+        return True
+
+    def save_all_performance_data(self):
+        # Save all performance data to the database
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.executemany('''
+            INSERT INTO Results (user_id, skill_id, score, date)
+            VALUES (:user_id, :skill_id, :score, :date)
+        ''', self.performance_data)
+        conn.commit()
+        conn.close()
+
+
 
     def settargets(self):
         s = "Set Targets"
