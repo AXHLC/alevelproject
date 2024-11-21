@@ -2,6 +2,12 @@ from tkinter import Tk, Label, Entry, Button, messagebox, Menu, Toplevel, Frame
 from tkinter import ttk
 from datetime import datetime
 import sqlite3
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib
+
+matplotlib.use('TkAgg')
+
+import barchart
 
 class BaseWindow:
     def __init__(self, role):
@@ -265,8 +271,57 @@ class CoachWindow(BaseWindow):
         print("You have clicked " + s)
 
     def viewprofile(self):
-        s = "View Profile"
-        print("You have clicked " + s)
+        # Retrieve all player usernames from the database
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT username FROM Users WHERE role='player'")
+        self.players = [row[0] for row in cursor.fetchall()]
+        conn.close()
+
+        if not self.players:
+            messagebox.showinfo('No Players', 'There are no players to display.')
+            return
+
+        self.player_index = 0  # Initialize the current player index
+
+        # Create the bar chart window
+        self.barchart_window = Toplevel(self.win)
+        self.barchart_window.title('Player Performance')
+        self.barchart_window.geometry('800x600')
+
+        self.display_player_barchart()
+
+    def display_player_barchart(self):
+        # Clear the window
+        for widget in self.barchart_window.winfo_children():
+            widget.destroy()
+
+        username = self.players[self.player_index]
+
+        # Use the plot_week_summary function from barchart.py
+        fig = barchart.plot_week_summary(username)
+
+        if fig is None:
+            Label(self.barchart_window, text=f"No data available for {username} in the past week.", font=('Helvetica', 14)).pack(pady=20)
+        else:
+            # Embed the plot in Tkinter window
+            canvas = FigureCanvasTkAgg(fig, master=self.barchart_window)
+            canvas.draw()
+            canvas.get_tk_widget().pack()
+
+        # Add navigation buttons
+        if self.player_index < len(self.players) - 1:
+            Button(self.barchart_window, text='NEXT', command=self.next_player).pack(pady=10)
+        else:
+            Button(self.barchart_window, text='DONE', command=self.close_barchart_window).pack(pady=10)
+
+    def next_player(self):
+        self.player_index += 1
+        self.display_player_barchart()
+
+    def close_barchart_window(self):
+        self.barchart_window.destroy()
+
 
     def enterperf(self):
         # Retrieve all player user_ids and usernames from the database

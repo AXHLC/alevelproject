@@ -9,7 +9,6 @@ def plot_week_summary(username: str) -> None:
 
     # Retrieve user_id based on username
     cursor.execute('SELECT user_id FROM Users WHERE username = ?', (username,))
-    
     result = cursor.fetchone()
 
     if not result:
@@ -35,51 +34,39 @@ def plot_week_summary(username: str) -> None:
         return
 
     # Prepare data for plotting
-    # sort the data here########################################################################
 
-    # Initialize scores dictionary
-    scores = {}
+    # Extract unique dates and sort them
+    dates = sorted(set([row[resultsIndex["date"]] for row in data]))
 
-    print("HEllo")
-    for datum in data: print(datum) 
-    print("bye")
+    # Map skill IDs to skill names
+    skills = {1: 'Shooting', 2: 'Dribbling', 3: 'Passing'}
 
+    # Initialize scores dictionary with dates and zero-initialized skill scores
+    scores = {date: {'Shooting': 0, 'Dribbling': 0, 'Passing': 0} for date in dates}
+
+    # Fill in the scores from data
     for datum in data:
+        date = datum[resultsIndex["date"]]
+        skill_id = int(datum[resultsIndex["skill_id"]])
+        score = float(datum[resultsIndex["score"]])
 
-        if not scores.get(datum[resultsIndex["date"]]):
-            scores[datum[resultsIndex["date"]]] = {
-                'Shooting': 0,
-                'Dribbling': 0,
-                'Passing': 0,
-            }
+        # Get the skill name from the skills dictionary
+        skill_name = skills.get(skill_id)
+        if skill_name:
+            scores[date][skill_name] = score
 
-        print(datum[resultsIndex["skill_id"]], datum[resultsIndex["score"]])
+    print("Printing scores:\n", scores)
 
-        if datum[resultsIndex["skill_id"]] == "01":
-            scores[datum[resultsIndex["date"]]]["Shooting"] = datum[resultsIndex["score"]]
-
-        elif datum[resultsIndex["skill_id"]] == "02":
-            scores[datum[resultsIndex["date"]]]["Dribbling"] = datum[resultsIndex["score"]]
-        
-        elif datum[resultsIndex["skill_id"]] == "03":
-            scores[datum[resultsIndex["date"]]]["Passing"] = datum[resultsIndex["score"]]
-
-
-
-    print("printing scores:\n", scores)
-
-############################################################################################
-
-
+    # Plotting the data
     # Set up bar chart parameters
-    x = np.arange(len(data))
+    x = np.arange(len(dates))
     width = 0.25
 
     fig, ax = plt.subplots()
 
-    shooting_scores = [scores[datum]['Shooting'] for datum in data]
-    dribbling_scores = [scores[datum]['Dribbling'] for datum in data]
-    passing_scores = [scores[datum]['Passing'] for datum in data]
+    shooting_scores = [scores[date]['Shooting'] for date in dates]
+    dribbling_scores = [scores[date]['Dribbling'] for date in dates]
+    passing_scores = [scores[date]['Passing'] for date in dates]
 
     ax.bar(x - width, shooting_scores, width, label='Shooting')
     ax.bar(x, dribbling_scores, width, label='Dribbling')
@@ -90,7 +77,7 @@ def plot_week_summary(username: str) -> None:
     ax.set_ylabel('Score (0-10)')
     ax.set_title(f'Week Summary for {username}')
     ax.set_xticks(x)
-    ax.set_xticklabels(data)
+    ax.set_xticklabels(dates)
     ax.set_ylim(0, 10)
     ax.legend()
 
