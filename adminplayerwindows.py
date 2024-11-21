@@ -270,30 +270,38 @@ class CoachWindow(BaseWindow):
         s = "Change Password"
         print("You have clicked " + s)
 
+    
+
+class CoachWindow(BaseWindow):
+    def __init__(self):
+        super().__init__(role='coach')
+        self.create_widgets()
+        self.win.mainloop()
+
     def viewprofile(self):
-        # Retrieve all player usernames from the database
+        # Create a new frame within the coach window
+        self.profile_frame = Frame(self.win)
+        self.profile_frame.pack(fill='both', expand=True)
+
+        # Retrieve all player usernames
         conn = sqlite3.connect('basketball_tracker.db')
         cursor = conn.cursor()
         cursor.execute("SELECT username FROM Users WHERE role='player'")
-        self.players = [row[0] for row in cursor.fetchall()]
+        players = [row[0] for row in cursor.fetchall()]
         conn.close()
 
-        if not self.players:
+        if not players:
             messagebox.showinfo('No Players', 'There are no players to display.')
             return
 
+        self.players = players
         self.player_index = 0  # Initialize the current player index
 
-        # Create the bar chart window
-        self.barchart_window = Toplevel(self.win)
-        self.barchart_window.title('Player Performance')
-        self.barchart_window.geometry('800x600')
+        self.display_player_chart()
 
-        self.display_player_barchart()
-
-    def display_player_barchart(self):
-        # Clear the window
-        for widget in self.barchart_window.winfo_children():
+    def display_player_chart(self):
+        # Clear the profile frame
+        for widget in self.profile_frame.winfo_children():
             widget.destroy()
 
         username = self.players[self.player_index]
@@ -302,26 +310,36 @@ class CoachWindow(BaseWindow):
         fig = barchart.plot_week_summary(username)
 
         if fig is None:
-            Label(self.barchart_window, text=f"No data available for {username} in the past week.", font=('Helvetica', 14)).pack(pady=20)
+            Label(self.profile_frame, text=f"No data available for {username} in the past week.", font=('Helvetica', 14)).pack(pady=20)
         else:
-            # Embed the plot in Tkinter window
-            canvas = FigureCanvasTkAgg(fig, master=self.barchart_window)
+            # Embed the plot in the profile_frame
+            canvas = FigureCanvasTkAgg(fig, master=self.profile_frame)
             canvas.draw()
-            canvas.get_tk_widget().pack()
+            canvas.get_tk_widget().pack(fill='both', expand=True)
 
         # Add navigation buttons
+        btn_frame = Frame(self.profile_frame)
+        btn_frame.pack(pady=10)
+
+        if self.player_index > 0:
+            Button(btn_frame, text='Previous', command=self.prev_player).pack(side='left', padx=5)
+
         if self.player_index < len(self.players) - 1:
-            Button(self.barchart_window, text='NEXT', command=self.next_player).pack(pady=10)
+            Button(btn_frame, text='Next', command=self.next_player).pack(side='left', padx=5)
         else:
-            Button(self.barchart_window, text='DONE', command=self.close_barchart_window).pack(pady=10)
+            Button(btn_frame, text='Done', command=self.close_profile_frame).pack(side='left', padx=5)
 
     def next_player(self):
         self.player_index += 1
-        self.display_player_barchart()
+        self.display_player_chart()
 
-    def close_barchart_window(self):
-        self.barchart_window.destroy()
+    def prev_player(self):
+        self.player_index -= 1
+        self.display_player_chart()
 
+    def close_profile_frame(self):
+        # Remove the profile_frame from the window
+        self.profile_frame.destroy()
 
     def enterperf(self):
         # Retrieve all player user_ids and usernames from the database
