@@ -26,28 +26,49 @@ def plot_week_summary(username: str) -> None:
           AND date BETWEEN date('now', '-6 days') AND date('now')
     ''', (user_id,))
     data = cursor.fetchall()
-    print("printing data:\n:", data)
     conn.close()
+
+    resultsIndex = { "date": 0, "skill_id": 1, "score": 2 }
 
     if not data:
         print("No data available for this user in the past week.")
         return
 
     # Prepare data for plotting
-
-    # sort the data here
+    # sort the data here########################################################################
 
     # Initialize scores dictionary
-    scores = [
-        {
-            datum[]: datum[0],
-            'Dribbling': datum[0],
-            'Passing': datum[0] 
-        }
-        for datum in data
-    ]
+    scores = {}
 
-    print("printing scores:\n:", scores)
+    print("HEllo")
+    for datum in data: print(datum) 
+    print("bye")
+
+    for datum in data:
+
+        if not scores.get(datum[resultsIndex["date"]]):
+            scores[datum[resultsIndex["date"]]] = {
+                'Shooting': 0,
+                'Dribbling': 0,
+                'Passing': 0,
+            }
+
+        print(datum[resultsIndex["skill_id"]], datum[resultsIndex["score"]])
+
+        if datum[resultsIndex["skill_id"]] == "01":
+            scores[datum[resultsIndex["date"]]]["Shooting"] = datum[resultsIndex["score"]]
+
+        elif datum[resultsIndex["skill_id"]] == "02":
+            scores[datum[resultsIndex["date"]]]["Dribbling"] = datum[resultsIndex["score"]]
+        
+        elif datum[resultsIndex["skill_id"]] == "03":
+            scores[datum[resultsIndex["date"]]]["Passing"] = datum[resultsIndex["score"]]
+
+
+
+    print("printing scores:\n", scores)
+
+############################################################################################
 
 
     # Set up bar chart parameters
@@ -55,10 +76,6 @@ def plot_week_summary(username: str) -> None:
     width = 0.25
 
     fig, ax = plt.subplots()
-
-    print("HEllo")
-    for datum in data: print(datum) 
-    print("bye")
 
     shooting_scores = [scores[datum]['Shooting'] for datum in data]
     dribbling_scores = [scores[datum]['Dribbling'] for datum in data]
