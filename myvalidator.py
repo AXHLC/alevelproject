@@ -133,6 +133,16 @@ class TheValidation:
         if len(username) <= 8 and re.search(pattern, username):
             return True
         return False
+    
+    def generate_username(self, first_name, last_name):
+        # Ensure first_name and last_name are lowercase and at least 3 characters long
+        first_name = (first_name.lower() + 'xxx')[:3]
+        last_name = (last_name.lower() + 'xxx')[:3]
+
+        # Concatenate the first three letters of first_name and last_name
+        username = first_name + last_name
+
+        return username
 
 
 # testing

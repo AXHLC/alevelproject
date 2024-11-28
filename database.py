@@ -32,7 +32,7 @@ class Database:
             cursor = self.conn.cursor()
             cursor.execute('''
             CREATE TABLE IF NOT EXISTS Skills (
-                skill_id TEXT PRIMARY KEY,
+                skill_id INTEGER PRIMARY KEY,
                 skill_name TEXT NOT NULL UNIQUE
             );
             ''')

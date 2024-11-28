@@ -2,10 +2,12 @@ import sqlite3
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_week_summary(username: str) -> None:
+def plot_week_summary(username: str):
     # Connect to the database
     conn = sqlite3.connect('basketball_tracker.db')
     cursor = conn.cursor()
+
+    print("username:", username)
 
     # Retrieve user_id based on username
     cursor.execute('SELECT user_id FROM Users WHERE username = ?', (username,))
@@ -14,7 +16,7 @@ def plot_week_summary(username: str) -> None:
     if not result:
         print("Username not found.")
         conn.close()
-        return
+        return None  # Return None if user not found
     user_id = result[0]
 
     # Retrieve data from the Results table for the specified user
@@ -27,46 +29,43 @@ def plot_week_summary(username: str) -> None:
     data = cursor.fetchall()
     conn.close()
 
-    resultsIndex = { "date": 0, "skill_id": 1, "score": 2 }
+    print("data:", data)
 
     if not data:
         print("No data available for this user in the past week.")
-        return
+        return None  # Return None if no data
 
     # Prepare data for plotting
+    dates = sorted(set([row[0] for row in data]))
+    print("dates:", dates)
+    skills = {"01": 'Shooting', "02": 'Dribbling', "03": 'Passing'}
 
-    # Extract unique dates and sort them
-    dates = sorted(set([row[resultsIndex["date"]] for row in data]))
-
-    # Map skill IDs to skill names
-    skills = {1: 'Shooting', 2: 'Dribbling', 3: 'Passing'}
-
-    # Initialize scores dictionary with dates and zero-initialized skill scores
+    # Initialize scores dictionary
     scores = {date: {'Shooting': 0, 'Dribbling': 0, 'Passing': 0} for date in dates}
 
     # Fill in the scores from data
-    for datum in data:
-        date = datum[resultsIndex["date"]]
-        skill_id = int(datum[resultsIndex["skill_id"]])
-        score = float(datum[resultsIndex["score"]])
-
-        # Get the skill name from the skills dictionary
+    for row in data:
+        date = row[0]
+        skill_id = row[1]
+        score = row[2]
         skill_name = skills.get(skill_id)
+        print("date:", date, "skill_id:", skill_id, "score:", score, "skill_name:", skill_name)
         if skill_name:
             scores[date][skill_name] = score
 
-    print("Printing scores:\n", scores)
-
-    # Plotting the data
     # Set up bar chart parameters
     x = np.arange(len(dates))
     width = 0.25
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(8, 4))
 
     shooting_scores = [scores[date]['Shooting'] for date in dates]
     dribbling_scores = [scores[date]['Dribbling'] for date in dates]
     passing_scores = [scores[date]['Passing'] for date in dates]
+
+    print("Shooting scores:", shooting_scores)
+    print("Dribbling scores:", dribbling_scores)
+    print("Passing scores:", passing_scores)
 
     ax.bar(x - width, shooting_scores, width, label='Shooting')
     ax.bar(x, dribbling_scores, width, label='Dribbling')
@@ -83,8 +82,5 @@ def plot_week_summary(username: str) -> None:
 
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.show()
 
-if __name__ == '__main__':
-    username = input("Enter the username: ")
-    plot_week_summary(username)
+    return plt.gcf()  # Return the figure object instead of showing it
