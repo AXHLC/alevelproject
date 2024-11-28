@@ -1,7 +1,7 @@
 from tkinter import Tk, Label, Entry, Button, messagebox, Menu, Toplevel, Frame
 from tkinter import ttk
 from tkinter import *
-from datetime import datetime
+from datetime import date
 import sqlite3
 from barchart import plot_week_summary
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -159,7 +159,7 @@ class CoachWindow(BaseWindow):
         # Add content to the Profiles tab
         self.create_search_player_section(self.profiles_frame)
         Button(self.profiles_frame, text='View Profile', command=self.viewprofile).pack(pady=10, anchor='center')
-        Button(self.profiles_frame, text='Enter Performance', command=self.enterperf).pack(pady=10, anchor='center')
+        Button(self.profiles_frame, text='Enter Performance', command=self.enter_performance).pack(pady=10, anchor='center')
         Button(self.profiles_frame, text='Set Targets', command=self.settargets).pack(pady=10, anchor='center')
 
         # Initialize settings tab last
@@ -278,8 +278,54 @@ class CoachWindow(BaseWindow):
         print("You have clicked " + s)
 
     def remove(self):
-        s = "Remove"
-        print("You have clicked " + s)
+        # Create a new window to display the list of players
+        self.remove_window = Toplevel(self.win)
+        self.remove_window.title("Remove Player")
+        self.remove_window.geometry("400x300")
+        self.remove_window.resizable(False, False)
+
+        # Retrieve all player usernames
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_id, username FROM Users WHERE role='player'")
+        self.players = cursor.fetchall()
+        conn.close()
+
+        if not self.players:
+            messagebox.showinfo('No Players', 'There are no players to remove.')
+            self.remove_window.destroy()
+            return
+
+        # Create a listbox to display the players
+        self.player_listbox = Listbox(self.remove_window)
+        self.player_listbox.pack(fill='both', expand=True, padx=10, pady=10)
+
+        for user_id, username in self.players:
+            self.player_listbox.insert(END, f"{username} (ID: {user_id})")
+
+        # Add a button to delete the selected player
+        Button(self.remove_window, text="Delete", command=self.delete_selected_player).pack(pady=10)
+
+###############################################################################################################
+
+    def delete_selected_player(self):
+        selected_index = self.player_listbox.curselection()
+        if not selected_index:
+            messagebox.showwarning('No Selection', 'Please select a player to delete.')
+            return
+
+        selected_player = self.players[selected_index[0]]
+        user_id = selected_player[0]
+
+        # Delete the player from the database
+        db = Database('basketball_tracker.db')
+        db.delete_record(user_id)
+        db.close()
+
+        messagebox.showinfo('Success', 'Player deleted successfully.')
+        self.remove_window.destroy()
+
+#########################################################################################################
 
     def changepass(self):
         s = "Change Password"
@@ -289,7 +335,8 @@ class CoachWindow(BaseWindow):
         # Create a new child window
         self.profile_window = Toplevel(self.win)
         self.profile_window.title("Player Performance")
-        self.profile_window.geometry("640x400")
+        self.profile_window.geometry("850x600")
+        self.profile_window.resizable(False, False)
 
         # Retrieve all player usernames
         conn = sqlite3.connect('basketball_tracker.db')
@@ -348,7 +395,7 @@ class CoachWindow(BaseWindow):
         # Remove the profile_frame from the window
         self.profile_window.destroy()
 
-    def enterperf(self):
+    def enter_performance(self):
         # Retrieve all player user_ids and usernames from the database
         conn = sqlite3.connect('basketball_tracker.db')
         cursor = conn.cursor()
@@ -371,6 +418,40 @@ class CoachWindow(BaseWindow):
         self.perf_window.geometry('400x300')
 
         self.performance_data = []  # List to store performance data
+
+        self.display_performance_entry()
+
+    def display_performance_entry(self):
+        # Clear the window
+        for widget in self.perf_window.winfo_children():
+            widget.destroy()
+
+        # Get current player's user_id and username
+        user_id, username = self.players[self.player_index]
+        
+        # Display player's username
+        Label(self.perf_window, text=f"Enter Performance for {username}", font=('Helvetica', 14, 'bold')).pack(pady=10)
+
+        # Create entry fields for scores
+        Label(self.perf_window, text='Shooting (out of 10):').pack()
+        self.shooting_entry = Entry(self.perf_window)
+        self.shooting_entry.pack()
+
+        Label(self.perf_window, text='Dribbling (out of 10):').pack()
+        self.dribbling_entry = Entry(self.perf_window)
+        self.dribbling_entry.pack()
+
+        Label(self.perf_window, text='Passing (out of 10):').pack()
+        self.passing_entry = Entry(self.perf_window)
+        self.passing_entry.pack()
+
+        # Determine if this is the last player
+        if self.player_index < len(self.players) - 1:
+            # Show NEXT button
+            Button(self.perf_window, text='NEXT', command=self.save_and_next).pack(pady=20)
+        else:
+            # Show DONE button
+            Button(self.perf_window, text='DONE', command=self.save_and_finish).pack(pady=20)
 
     def save_and_next(self):
         if self.save_performance_data():
@@ -407,19 +488,19 @@ class CoachWindow(BaseWindow):
             'user_id': user_id,
             'skill_id': self.skill_ids['shooting'],
             'score': int(shooting),
-            'date': datetime.now().strftime('%Y-%m-%d')
+            'date': date.today().strftime('%Y-%m-%d')
         })
         self.performance_data.append({
             'user_id': user_id,
             'skill_id': self.skill_ids['dribbling'],
             'score': int(dribbling),
-            'date': datetime.now().strftime('%Y-%m-%d')
+            'date': date.today().strftime('%Y-%m-%d')
         })
         self.performance_data.append({
             'user_id': user_id,
             'skill_id': self.skill_ids['passing'],
             'score': int(passing),
-            'date': datetime.now().strftime('%Y-%m-%d')
+            'date': date.today().strftime('%Y-%m-%d')
         })
 
         return True
@@ -436,10 +517,112 @@ class CoachWindow(BaseWindow):
         conn.close()
 
 
-
     def settargets(self):
-        s = "Set Targets"
-        print("You have clicked " + s)
+        # Retrieve all player user_ids and usernames
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_id, username FROM Users WHERE role='player'")
+        self.players = cursor.fetchall()  # List of tuples: (user_id, username)
+
+        # Retrieve skill IDs for skills
+        cursor.execute("SELECT skill_id, LOWER(skill_name) FROM Skills")
+        skills = cursor.fetchall()  # List of tuples: (skill_id, skill_name)
+        conn.close()
+
+        # Create a dictionary to map skill_name to skill_id
+        self.skill_ids = {skill_name: skill_id for skill_id, skill_name in skills}
+
+        if not self.players:
+            messagebox.showinfo('No Players', 'There are no players to set targets for.')
+            return
+
+        self.player_index = 0  # Initialize index to keep track of current player
+
+        # Initialize target entry window
+        self.targets_window = Toplevel(self.win)
+        self.targets_window.title('Set Targets')
+        self.targets_window.geometry('300x250')
+        self.targets_window.resizable(False, False)
+
+        # Start setting targets for the first player
+        self.display_target_entry()
+
+
+    def display_target_entry(self):
+        # Clear the window if there are existing widgets
+        for widget in self.targets_window.winfo_children():
+            widget.destroy()
+
+        # Get the current player's information
+        user_id, username = self.players[self.player_index]
+
+        # Display the player's name
+        Label(self.targets_window, text=f"Set targets for {username}", font=('Arial', 12)).pack(pady=10)
+
+        # Create input fields for each skill (targets out of 10)
+        self.target_entries = {}
+        for skill_name in ['Shooting', 'Dribbling', 'Passing']:
+            frame = Frame(self.targets_window)
+            frame.pack(pady=5)
+            Label(frame, text=f"{skill_name} Target (0-10):").pack(side='left')
+            entry = Entry(frame, width=5)
+            entry.pack(side='left')
+            self.target_entries[skill_name.lower()] = entry
+
+        # Add 'Save and Next' button
+        Button(self.targets_window, text='Save and Next', command=self.save_and_next_target).pack(pady=15)
+
+    def save_and_next_target(self):
+        if self.save_target_data():
+            # Move to next player
+            self.player_index += 1
+            if self.player_index < len(self.players):
+                self.display_target_entry()
+            else:
+                # All players have been processed
+                self.targets_window.destroy()
+                messagebox.showinfo('Success', 'Targets set successfully.')
+    
+    def save_target_data(self):
+        user_id, username = self.players[self.player_index]
+        targets = {}
+        for skill_name, entry in self.target_entries.items():
+            try:
+                target = float(entry.get())
+                if 0 <= target <= 10:
+                    targets[skill_name] = target
+                else:
+                    messagebox.showerror('Invalid Input', f'Please enter a target between 0 and 10 for {skill_name.capitalize()}.')
+                    return False  # Do not proceed to next player
+            except ValueError:
+                messagebox.showerror('Invalid Input', f'Please enter a valid number for {skill_name.capitalize()}.')
+                return False  # Do not proceed to next player
+
+        # Save the target data to the database
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        for skill_name, target in targets.items():
+            skill_id = self.get_skill_id(skill_name)
+            # Insert or update the target in the database
+            cursor.execute('''
+                INSERT OR REPLACE INTO Target (user_id, skill_id, target_score)
+                VALUES (?, ?, ?)
+            ''', (user_id, skill_id, target))
+        conn.commit()
+        conn.close()
+        return True  # Proceed to next player
+    
+    def get_skill_id(self, skill_name):
+        # Assuming you have self.skill_ids defined as in previous methods
+        return self.skill_ids.get(skill_name.lower())
+
+
+
+
+
+
+
+
 
 class PlayerWindow(BaseWindow):
     def __init__(self):

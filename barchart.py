@@ -7,8 +7,6 @@ def plot_week_summary(username: str):
     conn = sqlite3.connect('basketball_tracker.db')
     cursor = conn.cursor()
 
-    print("username:", username)
-
     # Retrieve user_id based on username
     cursor.execute('SELECT user_id FROM Users WHERE username = ?', (username,))
     result = cursor.fetchone()
@@ -29,7 +27,6 @@ def plot_week_summary(username: str):
     data = cursor.fetchall()
     conn.close()
 
-    print("data:", data)
 
     if not data:
         print("No data available for this user in the past week.")
@@ -37,7 +34,6 @@ def plot_week_summary(username: str):
 
     # Prepare data for plotting
     dates = sorted(set([row[0] for row in data]))
-    print("dates:", dates)
     skills = {"01": 'Shooting', "02": 'Dribbling', "03": 'Passing'}
 
     # Initialize scores dictionary
@@ -49,7 +45,6 @@ def plot_week_summary(username: str):
         skill_id = row[1]
         score = row[2]
         skill_name = skills.get(skill_id)
-        print("date:", date, "skill_id:", skill_id, "score:", score, "skill_name:", skill_name)
         if skill_name:
             scores[date][skill_name] = score
 
@@ -62,10 +57,6 @@ def plot_week_summary(username: str):
     shooting_scores = [scores[date]['Shooting'] for date in dates]
     dribbling_scores = [scores[date]['Dribbling'] for date in dates]
     passing_scores = [scores[date]['Passing'] for date in dates]
-
-    print("Shooting scores:", shooting_scores)
-    print("Dribbling scores:", dribbling_scores)
-    print("Passing scores:", passing_scores)
 
     ax.bar(x - width, shooting_scores, width, label='Shooting')
     ax.bar(x, dribbling_scores, width, label='Dribbling')

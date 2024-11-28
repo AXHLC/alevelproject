@@ -6,6 +6,7 @@ class Database:
         self.create_users_table()
         self.create_skills_table()
         self.create_results_table()
+        self.create_target_table()
         self.insert_default_skills()
 
     def create_users_table(self):
@@ -47,6 +48,20 @@ class Database:
                 skill_id TEXT,
                 score INTEGER NOT NULL,
                 date TEXT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES Users(user_id),
+                FOREIGN KEY (skill_id) REFERENCES Skills(skill_id)
+            );
+            ''')
+            self.conn.commit()
+    
+    def create_target_table(self):
+        if self.conn:
+            cursor = self.conn.cursor()
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Target (
+                user_id INTEGER,
+                skill_id TEXT,
+                target_score INTEGER NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES Users(user_id),
                 FOREIGN KEY (skill_id) REFERENCES Skills(skill_id)
             );
@@ -125,16 +140,17 @@ class Database:
     def DeleteRecord(self, userid):
         conn = sqlite3.connect('basketball_tracker.db')
         conn.execute("DELETE FROM users WHERE  user_id=?",(userid ,) )
+        conn.execute("DELETE FROM results WHERE  user_id=?",(userid ,) )
+        conn.execute("DELETE FROM target WHERE  user_id=?",(userid ,) )
         conn.commit()
         conn.close()
 
 # Example usage
 if __name__ == "__main__":
     db = Database('basketball_tracker.db')
-    db.InsertData('player', 'Player', 'User', 'PlayerPassword123?', 'player')
     #db.InsertData('manjack', 'MAN', 'JACK', 'pass', 'player')
     #db.InsertData('juniroyal', 'Junior', 'royal', 'word', 'player')
     #db.UpdateUsername(6, 'juniroyal')
-    #db.DeleteRecord(6)
+    db.DeleteRecord(11)
     #db.insert_default_admin()
     db.close()
