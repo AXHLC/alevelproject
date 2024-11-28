@@ -7,6 +7,7 @@ from barchart import plot_week_summary
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib
 import barchart
+from database import Database
 
 matplotlib.use('TkAgg')
 
@@ -306,8 +307,6 @@ class CoachWindow(BaseWindow):
         # Add a button to delete the selected player
         Button(self.remove_window, text="Delete", command=self.delete_selected_player).pack(pady=10)
 
-###############################################################################################################
-
     def delete_selected_player(self):
         selected_index = self.player_listbox.curselection()
         if not selected_index:
@@ -319,13 +318,12 @@ class CoachWindow(BaseWindow):
 
         # Delete the player from the database
         db = Database('basketball_tracker.db')
-        db.delete_record(user_id)
+        db.DeleteRecord(user_id)
         db.close()
 
         messagebox.showinfo('Success', 'Player deleted successfully.')
         self.remove_window.destroy()
 
-#########################################################################################################
 
     def changepass(self):
         s = "Change Password"
