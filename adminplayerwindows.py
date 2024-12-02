@@ -314,16 +314,53 @@ class CoachWindow(BaseWindow):
             return
 
         selected_player = self.players[selected_index[0]]
-        user_id = selected_player[0]
+        self.user_id_to_delete = selected_player[0]
 
+        # Show verification dialog
+        self.show_verification_dialog()
+
+    def show_verification_dialog(self):
+        # Create a new window for verification
+        self.verification_window = Toplevel(self.win)
+        self.verification_window.title("Verify Coach")
+        self.verification_window.geometry("300x200")
+        self.verification_window.resizable(False, False)
+
+        Label(self.verification_window, text="Enter Coach Username:").pack(pady=5)
+        self.coach_username_entry = Entry(self.verification_window)
+        self.coach_username_entry.pack(pady=5)
+
+        Label(self.verification_window, text="Enter Coach Password:").pack(pady=5)
+        self.coach_password_entry = Entry(self.verification_window, show='*')
+        self.coach_password_entry.pack(pady=5)
+
+        Button(self.verification_window, text="Verify", command=self.verify_coach_credentials).pack(pady=10)
+
+    def verify_coach_credentials(self):
+        username = self.coach_username_entry.get()
+        password = self.coach_password_entry.get()
+
+        # Verify the credentials against the database
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM Users WHERE username=? AND password=? AND role='admin'", (username, password))
+        coach = cursor.fetchone()
+        conn.close()
+
+        if coach:
+            self.verification_window.destroy()
+            self.delete_player_after_verification()
+        else:
+            messagebox.showerror('Error', 'Invalid credentials. Please try again.')
+
+    def delete_player_after_verification(self):
         # Delete the player from the database
         db = Database('basketball_tracker.db')
-        db.DeleteRecord(user_id)
+        db.delete_record(self.user_id_to_delete)
         db.close()
 
         messagebox.showinfo('Success', 'Player deleted successfully.')
         self.remove_window.destroy()
-
 
     def changepass(self):
         s = "Change Password"
