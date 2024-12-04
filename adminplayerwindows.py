@@ -356,7 +356,7 @@ class CoachWindow(BaseWindow):
     def delete_player_after_verification(self):
         # Delete the player from the database
         db = Database('basketball_tracker.db')
-        db.delete_record(self.user_id_to_delete)
+        db.DeleteRecord(self.user_id_to_delete)
         db.close()
 
         messagebox.showinfo('Success', 'Player deleted successfully.')
