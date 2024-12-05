@@ -317,6 +317,22 @@ class CoachWindow(BaseWindow):
         self.user_id_to_delete = selected_player[0]
 
         # Show verification dialog
+        self.show_confirmation_dialog()
+    
+    def show_confirmation_dialog(self):
+        # Create a new window for confirmation
+        self.confirmation_window = Toplevel(self.win)
+        self.confirmation_window.title("Confirm Deletion")
+        self.confirmation_window.geometry("300x150")
+        self.confirmation_window.resizable(False, False)
+
+        Label(self.confirmation_window, text="Are you sure you want to delete this player?").pack(pady=10)
+
+        Button(self.confirmation_window, text="Yes", command=self.confirm_deletion).pack(side=LEFT, padx=20, pady=10)
+        Button(self.confirmation_window, text="No", command=self.confirmation_window.destroy).pack(side=RIGHT, padx=20, pady=10)
+
+    def confirm_deletion(self):
+        self.confirmation_window.destroy()
         self.show_verification_dialog()
 
     def show_verification_dialog(self):
