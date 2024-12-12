@@ -3,7 +3,7 @@ from tkinter import Tk, messagebox
 from adminplayerwindows import CoachWindow, PlayerWindow
 import myvalidator as mv
 import sqlite3
-from hashandsalt import passmanager
+from hashandsalt import passmanager 
 
 
 class loginui:
@@ -56,7 +56,6 @@ class loginui:
             return False
         else:
             return True
-    
         
     def forgot_password(self):
         # Implement forgot password logic here
