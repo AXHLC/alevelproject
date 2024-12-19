@@ -8,6 +8,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib
 import barchart
 from database import Database
+from hashandsalt import passmanager
 
 matplotlib.use('TkAgg')
 
@@ -275,8 +276,108 @@ class CoachWindow(BaseWindow):
         window.destroy()
 
     def update(self):
-        s = "Update" # This is a comment
-        print("You have clicked " + s)
+        # Create a new window to display the list of players
+        self.update_window = Toplevel(self.win)
+        self.update_window.title("Update Player")
+        self.update_window.geometry("400x300")
+        self.update_window.resizable(False, False)
+
+        # Retrieve all player usernames
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_id, username FROM Users WHERE role='player'")
+        self.players = cursor.fetchall()
+        conn.close()
+
+        if not self.players:
+            messagebox.showinfo('No Players', 'There are no players to update.')
+            self.update_window.destroy()
+            return
+
+        # Create a listbox to display the players
+        self.player_listbox = Listbox(self.update_window)
+        self.player_listbox.pack(fill='both', expand=True, padx=10, pady=10)
+
+        for user_id, username in self.players:
+            self.player_listbox.insert(END, f"{username} (ID: {user_id})")
+
+        # Add a button to select the player for updating
+        Button(self.update_window, text="Select", command=self.select_player_for_update).pack(pady=10)
+
+    def select_player_for_update(self):
+        selected_index = self.player_listbox.curselection()
+        if not selected_index:
+            messagebox.showwarning('No Selection', 'Please select a player to update.')
+            return
+
+        selected_player = self.players[selected_index[0]]
+        self.user_id_to_update = selected_player[0]
+
+        # Retrieve the selected player's details
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT username, first_name, last_name FROM Users WHERE user_id=?", (self.user_id_to_update,))
+        user_details = cursor.fetchone()
+        conn.close()
+
+        if user_details:
+            username, first_name, last_name = user_details
+
+            # Create a new window to display the player's details for editing
+            self.edit_window = Toplevel(self.win)
+            self.edit_window.title("Edit Player Details")
+            self.edit_window.geometry("400x300")
+            self.edit_window.resizable(False, False)
+
+            Label(self.edit_window, text="Username:").pack(pady=5)
+            self.entry_username = Entry(self.edit_window)
+            self.entry_username.pack(pady=5)
+            self.entry_username.insert(0, username)
+
+            Label(self.edit_window, text="First Name:").pack(pady=5)
+            self.entry_first_name = Entry(self.edit_window)
+            self.entry_first_name.pack(pady=5)
+            self.entry_first_name.insert(0, first_name)
+
+            Label(self.edit_window, text="Last Name:").pack(pady=5)
+            self.entry_last_name = Entry(self.edit_window)
+            self.entry_last_name.pack(pady=5)
+            self.entry_last_name.insert(0, last_name)
+
+            Label(self.edit_window, text="Password:").pack(pady=5)
+            self.entry_password = Entry(self.edit_window, show='*')
+            self.entry_password.pack(pady=5)
+
+            Button(self.edit_window, text="Save", command=self.save_updated_player_details).pack(pady=10)
+    
+    def save_updated_player_details(self):
+        username = self.entry_username.get()
+        first_name = self.entry_first_name.get()
+        last_name = self.entry_last_name.get()
+        password = self.entry_password.get()
+
+        if not username or not first_name or not last_name or not password:
+            messagebox.showerror('Error', 'All fields are required.')
+            return
+
+        # Hash and salt the new password
+        hashed_password = passmanager.hash_password(password)
+
+        # Update the player's details in the database
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+            UPDATE Users
+            SET username=?, first_name=?, last_name=?, password=?
+            WHERE user_id=?
+        ''', (username, first_name, last_name, hashed_password, self.user_id_to_update))
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo('Success', 'Player details updated successfully.')
+        self.edit_window.destroy()
+        self.update_window.destroy()
+
 
     def remove(self):
         # Create a new window to display the list of players

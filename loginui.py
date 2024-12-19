@@ -54,8 +54,25 @@ class loginui:
         if not validator.passcheck(password):
             messagebox.showerror('Error', 'Password must contain at least one digit, one uppercase letter, and one special character')
             return False
+        
+        # Verify the password against the stored hashed and salted password
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT password FROM Users WHERE username=?", (username,))
+        result = cursor.fetchone()
+        conn.close()
+
+        if result:
+            stored_password = result[0]
+            if passmanager.verify_password(stored_password, password):
+                messagebox.showinfo('Success', 'Login successful')
+                return True
+            else:
+                messagebox.showerror('Error', 'Invalid username or password')
+                return False
         else:
-            return True
+            messagebox.showerror('Error', 'Invalid username or password')
+            return False
         
     def forgot_password(self):
         # Implement forgot password logic here
