@@ -58,21 +58,17 @@ class loginui:
         # Verify the password against the stored hashed and salted password
         conn = sqlite3.connect('basketball_tracker.db')
         cursor = conn.cursor()
-        cursor.execute("SELECT password FROM Users WHERE username=?", (username,))
+        cursor.execute("SELECT * FROM Users WHERE username=? AND password=?", (username, password))
         result = cursor.fetchone()
         conn.close()
 
         if result:
-            stored_password = result[0]
-            if passmanager.verify_password(stored_password, password):
-                messagebox.showinfo('Success', 'Login successful')
+            stored_password = result[4]
+            if stored_password == passmanager.hash_password(password):
                 return True
             else:
-                messagebox.showerror('Error', 'Invalid username or password')
+                messagebox.showerror('Error', 'Invalid password')
                 return False
-        else:
-            messagebox.showerror('Error', 'Invalid username or password')
-            return False
         
     def forgot_password(self):
         # Implement forgot password logic here

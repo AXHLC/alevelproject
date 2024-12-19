@@ -8,6 +8,7 @@ class passmanager:
         passw = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
         hashed_password = salt + passw
         return hashed_password
+    
 
 
 if __name__ == '__main__':

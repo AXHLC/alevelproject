@@ -145,6 +145,20 @@ class Database:
         conn.commit()
         conn.close()
 
+    def check_user(username, password):
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute('PRAGMA foreign_keys = ON')
+        cursor.execute('''
+            SELECT * FROM users WHERE username = ? AND password = ?
+        ''', (username, password ))
+        user = cursor.fetchone()
+        conn.close()
+        if user:
+            return user[0]
+        else:
+            return None
+
 # Example usage
 if __name__ == "__main__":
     db = Database('basketball_tracker.db')
