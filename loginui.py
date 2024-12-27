@@ -4,6 +4,8 @@ from adminplayerwindows import CoachWindow, PlayerWindow
 import myvalidator as mv
 import sqlite3
 from hashandsalt import passmanager 
+import base64
+import hashlib
 
 
 class loginui:
@@ -63,12 +65,19 @@ class loginui:
         conn.close()
 
         if result:
-            stored_password = result[4]
-            if stored_password == passmanager.hash_password(password):
+            stored_password = result[0]
+            combined = base64.b64decode(stored_password)
+            stored_hashed_password = combined[:-8]  # Extract the hashed password
+            salt = combined[-8:]  # Extract the salt
+            new_hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+            if new_hashed_password == stored_hashed_password:
                 return True
             else:
                 messagebox.showerror('Error', 'Invalid password')
                 return False
+        else:
+            messagebox.showerror('Error', 'Invalid username or password')
+            return False
         
     def forgot_password(self):
         # Implement forgot password logic here
