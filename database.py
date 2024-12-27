@@ -18,7 +18,7 @@ class Database:
                 username TEXT NOT NULL UNIQUE,
                 first_name TEXT NOT NULL,
                 last_name TEXT NOT NULL,
-                password TEXT NOT NULL,
+                password BLOB NOT NULL,
                 role TEXT NOT NULL CHECK(role IN ('player', 'admin'))
             );
             ''')
