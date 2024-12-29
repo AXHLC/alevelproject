@@ -4,8 +4,7 @@ from adminplayerwindows import CoachWindow, PlayerWindow
 import myvalidator as mv
 import sqlite3
 from hashandsalt import passmanager 
-import base64
-import hashlib
+import bcrypt
 
 
 class loginui:
@@ -39,13 +38,11 @@ class loginui:
     def submit(self):
         username = self.entry_username.get()
         password = self.entry_password.get()
-        self.verify_user(username, password)
+        self.validate(username, password)
     
     def validate(self, username, password):
         # Implement validation logic here
         validator = mv.TheValidation()
-        username = self.entry_username.get()
-        password = self.entry_password.get()
         if not validator.prescheck(username):
             messagebox.showerror('Error', 'Username is required')
             return False
@@ -61,18 +58,30 @@ class loginui:
         if not validator.passcheck(password):
             messagebox.showerror('Error', 'Password must contain at least one digit, one uppercase letter, and one special character')
             return False
+        self.verify_user(username, password)
         return True
+        
 
     def verify_user(self, username: str, password: str):
         if not self.validate(username, password):
             return False
-
+        
         # Retrieve the stored password from the database
-        self.conn = sqlite3.connect('basketball_tracker.db')
-        self.cursor = self.conn.cursor()
-        self.cursor.execute("SELECT password FROM Users WHERE username=?", (username,))
-        result = self.cursor.fetchone()
-        self.conn.close()
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT password FROM Users WHERE username=?", (username,))
+        result = cursor.fetchone()
+        conn.close()
+
+        if not result:
+            return False
+        result = result[0]
+        if result:
+            if password == result or bcrypt.checkpw(password.encode("utf-8"), result.encode("utf-8")):
+                messagebox.showinfo('Login', 'Login successful')
+                self.next_window(username)
+                return True
+        return False
 
         
             
@@ -82,29 +91,26 @@ class loginui:
         messagebox.showinfo('Forgot Password', 'Forgot password functionality is not implemented yet.')
         pass 
 
-    def next_window(self):
-        if self.validate():
-            username = self.entry_username.get()
-            password = self.entry_password.get()
-            conn = sqlite3.connect('basketball_tracker.db')
-            cursor = conn.cursor()
-            cursor.execute('SELECT * FROM Users WHERE username=? AND password=?', (username, password))
-            user = cursor.fetchone()
-            conn.close()
-            if user:
-                role = user[5]
-                if role == 'admin':
-                    messagebox.showinfo('Login', 'Login successful')
-                    self.parent.destroy()
-                    coach_window = CoachWindow()
-                elif role == 'player':
-                    messagebox.showinfo('Login', 'Login successful')
-                    self.parent.destroy()
-                    player_window = PlayerWindow()
-                else:
-                    messagebox.showerror('Login', 'Invalid role')
+    def next_window(self, username):
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM Users WHERE username=? AND password=?', (username, password))
+        user = cursor.fetchone()
+        conn.close()
+        if user:
+            role = user[5]
+            if role == 'admin':
+                messagebox.showinfo('Login', 'Login successful')
+                self.parent.destroy()
+                CoachWindow()
+            elif role == 'player':
+                messagebox.showinfo('Login', 'Login successful')
+                self.parent.destroy()
+                PlayerWindow()
             else:
-                messagebox.showerror('Login', 'Invalid username or password')
+                messagebox.showerror('Login', 'Invalid role')
+        else:
+            messagebox.showerror('Login', 'Invalid username or password')
 
 if __name__ == '__main__':
     parent = Tk()
