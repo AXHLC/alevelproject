@@ -1,12 +1,10 @@
-import hashlib
+import bcrypt
 import os
 
 
 class passmanager:
     def hash_password(password):
-        salt = b'abcdefgh'
-        passw = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-        hashed_password = salt + passw
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         return hashed_password
     
 
@@ -14,8 +12,6 @@ class passmanager:
 if __name__ == '__main__':
 
     password = input("Enter a password: ")
-    entered_password = passmanager.hash_password(password)
-    print(entered_password)
-    again = passmanager.hash_password(password)
-    print(f"The stored password is: {again}")
+    hashed_password = passmanager.hash_password(password)
+    print(f"The hashed password is: {hashed_password}")
 

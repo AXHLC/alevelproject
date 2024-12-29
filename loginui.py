@@ -68,29 +68,13 @@ class loginui:
             return False
 
         # Retrieve the stored password from the database
-        conn = sqlite3.connect('basketball_tracker.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT password FROM Users WHERE username=?", (username,))
-        result = cursor.fetchone()
-        conn.close()
+        self.conn = sqlite3.connect('basketball_tracker.db')
+        self.cursor = self.conn.cursor()
+        self.cursor.execute("SELECT password FROM Users WHERE username=?", (username,))
+        result = self.cursor.fetchone()
+        self.conn.close()
 
-        if result:
-            stored_password = result[0]
-            stored_password += '=' * (-len(stored_password) % 4)
-            combined = base64.b64decode(stored_password)
-            stored_hashed_password = combined[:-8]  # Extract the hashed password
-            salt = combined[-8:]  # Extract the salt
-            new_hashed_password = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-            if new_hashed_password == stored_hashed_password:
-                messagebox.showinfo('Success', 'Login successful')
-                self.next_window(username)
-                return True
-            else:
-                messagebox.showerror('Error', 'Invalid password')
-                return False
-        else:
-            messagebox.showerror('Error', 'Invalid username or password')
-            return False
+        
             
         
     def forgot_password(self):
