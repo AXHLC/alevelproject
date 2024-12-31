@@ -9,6 +9,7 @@ import matplotlib
 import barchart
 from database import Database
 from hashandsalt import passmanager
+import bcrypt
 
 matplotlib.use('TkAgg')
 
@@ -458,6 +459,7 @@ class CoachWindow(BaseWindow):
         username = self.coach_username_entry.get()
         password = self.coach_password_entry.get()
 
+
         # Verify the credentials against the database
         conn = sqlite3.connect('basketball_tracker.db')
         cursor = conn.cursor()
@@ -466,8 +468,14 @@ class CoachWindow(BaseWindow):
         conn.close()
 
         if coach:
-            self.verification_window.destroy()
-            self.delete_player_after_verification()
+            stored_hashed_password = coach[0]
+            print(f"Stored Hashed Password: {stored_hashed_password}")
+
+            if bcrypt.checkpw(password.encode('utf-8'), stored_hashed_password.encode('utf-8')):
+                self.verification_window.destroy()
+                self.delete_player_after_verification()
+            else:
+                messagebox.showerror('Error', 'Invalid credentials. Please try again.')
         else:
             messagebox.showerror('Error', 'Invalid credentials. Please try again.')
 
