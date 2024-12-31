@@ -463,7 +463,7 @@ class CoachWindow(BaseWindow):
         # Verify the credentials against the database
         conn = sqlite3.connect('basketball_tracker.db')
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Users WHERE username=? AND password=? AND role='admin'", (username, password))
+        cursor.execute("SELECT password FROM Users WHERE username=? AND role='admin'", (username,))
         coach = cursor.fetchone()
         conn.close()
 
