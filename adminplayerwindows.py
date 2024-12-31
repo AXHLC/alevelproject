@@ -768,14 +768,6 @@ class CoachWindow(BaseWindow):
         # Assuming you have self.skill_ids defined as in previous methods
         return self.skill_ids.get(skill_name.lower())
 
-
-
-
-
-
-
-
-
 class PlayerWindow(BaseWindow):
     def __init__(self):
         super().__init__('player')

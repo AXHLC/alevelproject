@@ -3,7 +3,6 @@ from tkinter import Tk, messagebox
 from adminplayerwindows import CoachWindow, PlayerWindow
 import myvalidator as mv
 import sqlite3
-from hashandsalt import passmanager 
 import bcrypt
 
 
@@ -38,7 +37,8 @@ class loginui:
     def submit(self):
         username = self.entry_username.get()
         password = self.entry_password.get()
-        self.validate(username, password)
+        if self.validate(username, password):
+            self.verify_user(username, password)
     
     def validate(self, username, password):
         # Implement validation logic here
@@ -58,14 +58,9 @@ class loginui:
         if not validator.passcheck(password):
             messagebox.showerror('Error', 'Password must contain at least one digit, one uppercase letter, and one special character')
             return False
-        self.verify_user(username, password)
         return True
-        
 
     def verify_user(self, username: str, password: str):
-        if not self.validate(username, password):
-            return False
-        
         # Retrieve the stored password from the database
         conn = sqlite3.connect('basketball_tracker.db')
         cursor = conn.cursor()
@@ -78,13 +73,9 @@ class loginui:
         result = result[0]
         if result:
             if password == result or bcrypt.checkpw(password.encode("utf-8"), result.encode("utf-8")):
-                messagebox.showinfo('Login', 'Login successful')
                 self.next_window(username)
                 return True
         return False
-
-        
-            
         
     def forgot_password(self):
         # Implement forgot password logic here
@@ -94,11 +85,11 @@ class loginui:
     def next_window(self, username):
         conn = sqlite3.connect('basketball_tracker.db')
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM Users WHERE username=? AND password=?', (username, password))
+        cursor.execute('SELECT role FROM Users WHERE username=?', (username,))
         user = cursor.fetchone()
         conn.close()
         if user:
-            role = user[5]
+            role = user[0]
             if role == 'admin':
                 messagebox.showinfo('Login', 'Login successful')
                 self.parent.destroy()
