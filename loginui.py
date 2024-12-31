@@ -75,6 +75,7 @@ class loginui:
             if password == result or bcrypt.checkpw(password.encode("utf-8"), result.encode("utf-8")):
                 self.next_window(username)
                 return True
+        messagebox.showerror('Login', 'Invalid username or password')
         return False
         
     def forgot_password(self):

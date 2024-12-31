@@ -263,13 +263,14 @@ class CoachWindow(BaseWindow):
         save_button.grid(row=5, column=0, columnspan=2, pady=20)
 
     def save_new_player(self, username, first_name, last_name, password, role, window):
+        hashed_password = passmanager.hash_password(password)
         # Insert the new player into the database
         conn = sqlite3.connect('basketball_tracker.db')
         cursor = conn.cursor()
         cursor.execute('''
             INSERT INTO Users (username, first_name, last_name, password, role)
             VALUES (?, ?, ?, ?, ?)
-        ''', (username, first_name, last_name, password, role))
+        ''', (username, first_name, last_name, hashed_password, role))
         conn.commit()
         conn.close()
         messagebox.showinfo('Success', 'New player added successfully')
