@@ -893,19 +893,14 @@ class PlayerWindow(BaseWindow):
         self.notebook.add(self.settings_frame, text='Settings')
 
         # Add content to the View tab
-        Button(self.view_frame, text='Current Level', command=self.current).pack(pady=10, anchor='center')
-        Button(self.view_frame, text='Overall Level', command=self.overall).pack(pady=10, anchor='center')
+        Button(self.view_frame, text='This Week', command=self.this_week).pack(pady=10, anchor='center')
         Button(self.view_frame, text='My Targets', command=self.mytargets).pack(pady=10, anchor='center')
 
         # Initialize settings tab last
         self.initialize_settings_tab()
 
-    def current(self):
-        s = "Current Level"
-        print("You have clicked " + s)
-
-    def overall(self):
-        s = "Overall Level"
+    def this_week(self):
+        s = "This week"
         print("You have clicked " + s)
 
     def mytargets(self):
