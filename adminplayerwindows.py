@@ -346,33 +346,26 @@ class CoachWindow(BaseWindow):
             self.entry_last_name.pack(pady=5)
             self.entry_last_name.insert(0, last_name)
 
-            Label(self.edit_window, text="Password:").pack(pady=5)
-            self.entry_password = Entry(self.edit_window, show='*')
-            self.entry_password.pack(pady=5)
-
             Button(self.edit_window, text="Save", command=self.save_updated_player_details).pack(pady=10)
     
     def save_updated_player_details(self):
         username = self.entry_username.get()
         first_name = self.entry_first_name.get()
         last_name = self.entry_last_name.get()
-        password = self.entry_password.get()
 
-        if not username or not first_name or not last_name or not password:
+        if not username or not first_name or not last_name:
             messagebox.showerror('Error', 'All fields are required.')
             return
 
-        # Hash and salt the new password
-        hashed_password = passmanager.hash_password(password)
 
         # Update the player's details in the database
         conn = sqlite3.connect('basketball_tracker.db')
         cursor = conn.cursor()
         cursor.execute('''
             UPDATE Users
-            SET username=?, first_name=?, last_name=?, password=?
+            SET username=?, first_name=?, last_name=?
             WHERE user_id=?
-        ''', (username, first_name, last_name, hashed_password, self.user_id_to_update))
+        ''', (username, first_name, last_name, self.user_id_to_update))
         conn.commit()
         conn.close()
 
@@ -489,8 +482,111 @@ class CoachWindow(BaseWindow):
         self.remove_window.destroy()
 
     def changepass(self):
-        s = "Change Password"
-        print("You have clicked " + s)
+        self.create_change_password_ui()
+
+    def create_change_password_ui(self):
+        self.change_password_window = Toplevel(self.win)
+        self.change_password_window.title("Change Password")
+
+        Label(self.change_password_window, text="Select Player:").pack(pady=5)
+        self.player_selection = ttk.Combobox(self.change_password_window, values=self.get_player_list())
+        self.player_selection.pack(pady=5)
+
+        Label(self.change_password_window, text="Current Password:").pack(pady=5)
+        self.current_password_entry = Entry(self.change_password_window, show='*')
+        self.current_password_entry.pack(pady=5)
+
+        Label(self.change_password_window, text="New Password:").pack(pady=5)
+        self.new_password_entry = Entry(self.change_password_window, show='*')
+        self.new_password_entry.pack(pady=5)
+
+        Label(self.change_password_window, text="Confirm New Password:").pack(pady=5)
+        self.confirm_new_password_entry = Entry(self.change_password_window, show='*')
+        self.confirm_new_password_entry.pack(pady=5)
+
+        Button(self.change_password_window, text="Change Password", command=self.verify_current_password).pack(pady=10)
+
+    def get_player_list(self):
+        # Fetch the list of players from the database
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT username FROM Users WHERE role='player'")
+        players = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        return players
+
+    def verify_current_password(self):
+        username = self.player_selection.get()
+        current_password = self.current_password_entry.get()
+        new_password = self.new_password_entry.get()
+        confirm_new_password = self.confirm_new_password_entry.get()
+
+        if new_password != confirm_new_password:
+            messagebox.showerror('Error', 'New passwords do not match.')
+            return
+
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT password FROM Users WHERE username=? AND role='player'", (username,))
+        result = cursor.fetchone()
+        conn.close()
+
+        if result:
+            stored_hashed_password = result[0]
+            if bcrypt.checkpw(current_password.encode('utf-8'), stored_hashed_password.encode('utf-8')):
+                self.open_admin_verification_window(username, new_password)
+            else:
+                messagebox.showerror('Error', 'Current password is incorrect.')
+        else:
+            messagebox.showerror('Error', 'Player not found.')
+
+    def open_admin_verification_window(self, username, new_password):
+        self.admin_verification_window = Toplevel(self.win)
+        self.admin_verification_window.title("Admin Verification")
+
+        Label(self.admin_verification_window, text="Admin Username:").pack(pady=5)
+        self.admin_username_entry = Entry(self.admin_verification_window)
+        self.admin_username_entry.pack(pady=5)
+
+        Label(self.admin_verification_window, text="Admin Password:").pack(pady=5)
+        self.admin_password_entry = Entry(self.admin_verification_window, show='*')
+        self.admin_password_entry.pack(pady=5)
+
+        self.username_to_update = username
+        self.new_password_to_update = new_password
+
+        Button(self.admin_verification_window, text="Verify", command=self.verify_admin_credentials_for_password_change).pack(pady=10)
+
+    def verify_admin_credentials_for_password_change(self):
+        admin_username = self.admin_username_entry.get()
+        admin_password = self.admin_password_entry.get()
+
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT password FROM Users WHERE username=? AND role='admin'", (admin_username,))
+        result = cursor.fetchone()
+        conn.close()
+
+        if result:
+            stored_hashed_password = result[0]
+            if bcrypt.checkpw(admin_password.encode('utf-8'), stored_hashed_password.encode('utf-8')):
+                self.update_password(self.username_to_update, self.new_password_to_update)
+                self.admin_verification_window.destroy()
+            else:
+                messagebox.showerror('Error', 'Invalid admin credentials.')
+        else:
+            messagebox.showerror('Error', 'Admin not found.')
+
+    def update_password(self, username, new_password):
+        hashed_password = passmanager.hash_password(new_password)
+        conn = sqlite3.connect('basketball_tracker.db')
+        cursor = conn.cursor()
+        cursor.execute("UPDATE Users SET password=? WHERE username=? AND role='player'", (hashed_password, username))
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo('Success', 'Password updated successfully.')
+        self.change_password_window.destroy()
 
     def viewprofile(self):
         # Create a new child window
