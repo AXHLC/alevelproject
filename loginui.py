@@ -97,7 +97,7 @@ class loginui:
             elif role == 'player':
                 messagebox.showinfo('Login', 'Login successful')
                 self.parent.destroy()
-                PlayerWindow()
+                PlayerWindow(username)
             else:
                 messagebox.showerror('Login', 'Invalid role')
         else:

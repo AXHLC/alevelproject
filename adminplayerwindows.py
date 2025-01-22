@@ -874,8 +874,11 @@ class CoachWindow(BaseWindow):
         return self.skill_ids.get(skill_name.lower())
 
 class PlayerWindow(BaseWindow):
-    def __init__(self):
+    def __init__(self, username):
+        self.username = username
         super().__init__('player')
+        self.profile_window = Frame(self.win)  # Initialize profile_window
+        self.profile_window.pack(fill='both', expand=True)
         self.create_player_tabs()
         self.win.mainloop()
 
@@ -900,12 +903,30 @@ class PlayerWindow(BaseWindow):
         self.initialize_settings_tab()
 
     def this_week(self):
-        s = "This week"
-        print("You have clicked " + s)
+        # Assuming `self.username` holds the currently logged-in player's username
+        username = self.username
 
+        # Generate the bar chart figure for the current player
+        fig = plot_week_summary(username)
+
+        if fig:
+            # Create a frame for the canvas
+            canvas_frame = Frame(self.profile_window)
+            canvas_frame.pack(fill='both', expand=True)
+
+            # Embed the figure in the Tkinter canvas
+            canvas = FigureCanvasTkAgg(fig, master=canvas_frame)
+            canvas.draw()
+            canvas.get_tk_widget().pack(fill='both', expand=True)
+            Button(canvas_frame, text='Exit', command=canvas_frame.destroy).pack(pady=10, anchor='center')
+        else:
+            Label(self.profile_window, text=f"No data available for {username} in the past week.").pack()
+        
     def mytargets(self):
         s = "My Targets"
         print("You have clicked " + s)
+
+
 
 
 if __name__ == '__main__':
