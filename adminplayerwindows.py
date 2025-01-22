@@ -884,7 +884,7 @@ class PlayerWindow(BaseWindow):
 
     def create_player_tabs(self):
         # Create a notebook widget
-        self.notebook = ttk.Notebook(self.win)
+        self.notebook = ttk.Notebook(self.profile_window)
         self.notebook.pack(expand=True, fill='both', padx=10, pady=10)
 
         # Create frames for View and Settings
@@ -906,6 +906,13 @@ class PlayerWindow(BaseWindow):
         # Assuming `self.username` holds the currently logged-in player's username
         username = self.username
 
+        # Destroy the main player menu frame
+        self.profile_window.destroy()
+
+        # Create a new frame for the bar chart
+        self.profile_window = Frame(self.win)
+        self.profile_window.pack(fill='both', expand=True)
+
         # Generate the bar chart figure for the current player
         fig = plot_week_summary(username)
 
@@ -918,10 +925,14 @@ class PlayerWindow(BaseWindow):
             canvas = FigureCanvasTkAgg(fig, master=canvas_frame)
             canvas.draw()
             canvas.get_tk_widget().pack(fill='both', expand=True)
-            Button(canvas_frame, text='Exit', command=canvas_frame.destroy).pack(pady=10, anchor='center')
+
+            # Add an Exit button to go back to the main player menu
+            exit_button_frame = Frame(self.profile_window)
+            exit_button_frame.pack(fill='x', pady=10)
+            Button(exit_button_frame, text='Exit', command=self.create_player_tabs).pack(anchor='center')
         else:
             Label(self.profile_window, text=f"No data available for {username} in the past week.").pack()
-        
+
     def mytargets(self):
         s = "My Targets"
         print("You have clicked " + s)
