@@ -1,8 +1,9 @@
 from tkinter import Tk, Label, Entry, Button, messagebox, Menu, Toplevel, Frame
+import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 from datetime import date
-from datetime import datetime
+from datetime import datetime, timedelta
 import sqlite3
 from barchart import plot_week_summary
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -948,8 +949,15 @@ class PlayerWindow(BaseWindow):
         if not targets:
             messagebox.showinfo('No Targets', 'There are no targets set for this week.')
             return
+        
+        for widget in self.profile_window.winfo_children():
+            widget.destroy()
 
-        target_frame = Frame(self)
+        target_window = tk.Toplevel()
+        target_window.title(f"Targets for {username}")
+        target_window.geometry("400x300")
+
+        target_frame = Frame(target_window)
         target_frame.pack(fill='both', expand=True)
 
         Label(target_frame, text=f"Targets for {username}").pack(pady=5)
@@ -957,24 +965,30 @@ class PlayerWindow(BaseWindow):
         Label(target_frame, text=f"Dribbling: {targets.get('dribbling', 'N/A')}").pack()
         Label(target_frame, text=f"Passing: {targets.get('passing', 'N/A')}").pack()
 
-        Button(target_frame, text='Back', command=self.create_player_tabs).pack(pady=10)
+        Button(target_frame, text='Exit', command=self.create_player_tabs).pack(pady=10)
 
     def get_player_targets_for_current_week(self, username):
         conn = sqlite3.connect("basketball_tracker.db")
         cursor = conn.cursor()
 
         today = datetime.now()
-        week_start = today.replace(hour=0, minute=0, second=0, microsecond=0)
+        # Calculate the most recent Monday
+        week_start = today - timedelta(days=today.weekday())
+        week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
+        # Calculate the upcoming Sunday
+        week_end = week_start + timedelta(days=6, hours=23, minutes=59, seconds=59)
+
 
         query = """
             SELECT s.skill_name, t.target_score
             FROM Target t
-            JOIN Users u ON t.user_id = u.id
-            JOIN Skills s ON t.skill_id = s.id
+            JOIN Users u ON t.user_id = u.user_id
+            JOIN Skills s ON t.skill_id = s.skill_id
             WHERE u.username = ?
-            AND t.date_assigned >= ?
+            AND t.date_entered >= ?
+            AND t.date_entered < ?
         """
-        cursor.execute(query, (username, week_start,))
+        cursor.execute(query, (username, week_start, week_end,))
         rows = cursor.fetchall()
 
         conn.close()
