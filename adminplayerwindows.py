@@ -883,6 +883,10 @@ class PlayerWindow(BaseWindow):
         self.win.mainloop()
 
     def create_player_tabs(self):
+
+        for widget in self.profile_window.winfo_children():
+            widget.destroy()
+            
         # Create a notebook widget
         self.notebook = ttk.Notebook(self.profile_window)
         self.notebook.pack(expand=True, fill='both', padx=10, pady=10)
@@ -906,19 +910,20 @@ class PlayerWindow(BaseWindow):
         # Assuming `self.username` holds the currently logged-in player's username
         username = self.username
 
-        # Destroy the main player menu frame
-        self.profile_window.destroy()
+        
+        for widget in self.profile_window.winfo_children():
+            widget.destroy()
 
         # Create a new frame for the bar chart
-        self.profile_window = Frame(self.win)
-        self.profile_window.pack(fill='both', expand=True)
+        bar_chart_frame = Frame(self.profile_window)
+        bar_chart_frame.pack(fill='both', expand=True)
 
         # Generate the bar chart figure for the current player
         fig = plot_week_summary(username)
 
         if fig:
             # Create a frame for the canvas
-            canvas_frame = Frame(self.profile_window)
+            canvas_frame = Frame(bar_chart_frame)
             canvas_frame.pack(fill='both', expand=True)
 
             # Embed the figure in the Tkinter canvas
@@ -927,11 +932,11 @@ class PlayerWindow(BaseWindow):
             canvas.get_tk_widget().pack(fill='both', expand=True)
 
             # Add an Exit button to go back to the main player menu
-            exit_button_frame = Frame(self.profile_window)
+            exit_button_frame = Frame(bar_chart_frame)
             exit_button_frame.pack(fill='x', pady=10)
             Button(exit_button_frame, text='Exit', command=self.create_player_tabs).pack(anchor='center')
         else:
-            Label(self.profile_window, text=f"No data available for {username} in the past week.").pack()
+            Label(bar_chart_frame, text=f"No data available for {username} in the past week.").pack()
 
     def mytargets(self):
         s = "My Targets"
