@@ -953,11 +953,7 @@ class PlayerWindow(BaseWindow):
         for widget in self.profile_window.winfo_children():
             widget.destroy()
 
-        target_window = tk.Toplevel()
-        target_window.title(f"Targets for {username}")
-        target_window.geometry("400x300")
-
-        target_frame = Frame(target_window)
+        target_frame = Frame(self.profile_window)
         target_frame.pack(fill='both', expand=True)
 
         Label(target_frame, text=f"Targets for {username}").pack(pady=5)
