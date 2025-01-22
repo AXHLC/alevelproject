@@ -859,13 +859,14 @@ class CoachWindow(BaseWindow):
         # Save the target data to the database
         conn = sqlite3.connect('basketball_tracker.db')
         cursor = conn.cursor()
+        date_entered = datetime.now().date()
         for skill_name, target in targets.items():
             skill_id = self.get_skill_id(skill_name)
             # Insert or update the target in the database
             cursor.execute('''
-                INSERT OR REPLACE INTO Target (user_id, skill_id, target_score)
-                VALUES (?, ?, ?)
-            ''', (user_id, skill_id, target))
+                INSERT OR REPLACE INTO Target (user_id, skill_id, target_score, date_entered)
+                VALUES (?, ?, ?, ?)
+            ''', (user_id, skill_id, target, date_entered))
         conn.commit()
         conn.close()
         return True  # Proceed to next player
@@ -966,24 +967,24 @@ class PlayerWindow(BaseWindow):
         week_start = today.replace(hour=0, minute=0, second=0, microsecond=0)
 
         query = """
-            SELECT shooting_target, dribbling_target, passing_target 
-            FROM Target 
-            WHERE username=? 
-            AND date_assigned >= ?
+            SELECT s.skill_name, t.target_score
+            FROM Target t
+            JOIN Users u ON t.user_id = u.id
+            JOIN Skills s ON t.skill_id = s.id
+            WHERE u.username = ?
+            AND t.date_assigned >= ?
         """
         cursor.execute(query, (username, week_start,))
-        row = cursor.fetchone()
+        rows = cursor.fetchall()
 
         conn.close()
 
-        if row:
-            return {
-                "shooting": row[0],
-                "dribbling": row[1],
-                "passing": row[2]
-            }
-        else:
-            return {}
+        targets = {}
+        for row in rows:
+            skill_name, target_score = row
+            targets[skill_name.lower()] = target_score
+
+        return targets
 
 
 

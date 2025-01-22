@@ -64,6 +64,7 @@ class Database:
                 target_score INTEGER NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES Users(user_id),
                 FOREIGN KEY (skill_id) REFERENCES Skills(skill_id)
+                
             );
             ''')
             self.conn.commit()
