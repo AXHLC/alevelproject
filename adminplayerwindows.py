@@ -2,6 +2,7 @@ from tkinter import Tk, Label, Entry, Button, messagebox, Menu, Toplevel, Frame
 from tkinter import ttk
 from tkinter import *
 from datetime import date
+from datetime import datetime
 import sqlite3
 from barchart import plot_week_summary
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -938,9 +939,52 @@ class PlayerWindow(BaseWindow):
         else:
             Label(bar_chart_frame, text=f"No data available for {username} in the past week.").pack()
 
+
     def mytargets(self):
-        s = "My Targets"
-        print("You have clicked " + s)
+        username = self.username  # Assuming self.username is defined
+        targets = self.get_player_targets_for_current_week(username)
+
+        if not targets:
+            messagebox.showinfo('No Targets', 'There are no targets set for this week.')
+            return
+
+        target_frame = Frame(self)
+        target_frame.pack(fill='both', expand=True)
+
+        Label(target_frame, text=f"Targets for {username}").pack(pady=5)
+        Label(target_frame, text=f"Shooting: {targets.get('shooting', 'N/A')}").pack()
+        Label(target_frame, text=f"Dribbling: {targets.get('dribbling', 'N/A')}").pack()
+        Label(target_frame, text=f"Passing: {targets.get('passing', 'N/A')}").pack()
+
+        Button(target_frame, text='Back', command=self.create_player_tabs).pack(pady=10)
+
+    def get_player_targets_for_current_week(self, username):
+        conn = sqlite3.connect("YourDBFile.db")
+        cursor = conn.cursor()
+
+        today = datetime.now()
+        week_start = today.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        query = """
+            SELECT shooting_target, dribbling_target, passing_target 
+            FROM targets 
+            WHERE username=? 
+            AND date_assigned >= ?
+        """
+        cursor.execute(query, (username, week_start,))
+        row = cursor.fetchone()
+
+        conn.close()
+
+        if row:
+            return {
+                "shooting": row[0],
+                "dribbling": row[1],
+                "passing": row[2]
+            }
+        else:
+            return {}
+
 
 
 
