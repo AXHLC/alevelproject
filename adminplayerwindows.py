@@ -959,7 +959,7 @@ class PlayerWindow(BaseWindow):
         Button(target_frame, text='Back', command=self.create_player_tabs).pack(pady=10)
 
     def get_player_targets_for_current_week(self, username):
-        conn = sqlite3.connect("YourDBFile.db")
+        conn = sqlite3.connect("basketball_tracker.db")
         cursor = conn.cursor()
 
         today = datetime.now()
@@ -967,7 +967,7 @@ class PlayerWindow(BaseWindow):
 
         query = """
             SELECT shooting_target, dribbling_target, passing_target 
-            FROM targets 
+            FROM Target 
             WHERE username=? 
             AND date_assigned >= ?
         """
