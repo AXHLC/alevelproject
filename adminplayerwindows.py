@@ -82,8 +82,10 @@ class BaseWindow:
 
     def apply_font_courier(self):
         # Change the font to Courier New
+        print("1")
         self.win.option_add("*Font", "Courier 12")
         self.update_all_widgets_font("Courier 12")
+        print("2")
     
     def courier_font(self):
         self.apply_font_courier()
@@ -100,8 +102,10 @@ class BaseWindow:
         # Change the background and foreground colors for dark mode
         self.win.config(bg='black')
         self.menubar.config(bg='black', fg='white')
+       
         for menu in self.menubar.winfo_children():
             menu.config(bg='black', fg='white')
+       
 
     def darkmode(self):
         self.apply_dark_mode()
