@@ -64,78 +64,57 @@ class BaseWindow:
         # Create Exit button
         Button(self.settings_frame, text='Exit', command=self.win.destroy).pack(pady=10, anchor='center')
 
-    def apply_font_arial(self):
-        # Change the font to Arial
+    def arial_font(self):
         self.win.option_add("*Font", "Arial 12")
         self.update_all_widgets_font("Arial 12")
-    
-    def arial_font(self):
-        self.apply_font_arial()
 
-    def apply_font_times(self):
-        # Change the font to Times New Roman
+    def times_font(self):
         self.win.option_add("*Font", "Times 12")
         self.update_all_widgets_font("Times 12")
 
-    def times_font(self):
-        self.apply_font_times()
-
-    def apply_font_courier(self):
-        # Change the font to Courier New
-        print("1")
+    def courier_font(self):
         self.win.option_add("*Font", "Courier 12")
         self.update_all_widgets_font("Courier 12")
-        print("2")
-    
-    def courier_font(self):
-        self.apply_font_courier()
 
     def apply_font_original(self):
-        # Change the font to the original font
-        self.win.option_add("*Font", "TkDefaultFont")
-        self.update_all_widgets_font("TkDefaultFont")
-
-    def original_font(self):
-        self.apply_font_original()
-
-    def apply_dark_mode(self):
-        # Change the background and foreground colors for dark mode
-        self.win.config(bg='black')
-        self.menubar.config(bg='black', fg='white')
-       
-        for menu in self.menubar.winfo_children():
-            menu.config(bg='black', fg='white')
-       
-
-    def darkmode(self):
-        self.apply_dark_mode()
-
-    def apply_light_mode(self):
-        # Change the background and foreground colors for light mode
-        self.win.config(bg='white')
-        self.menubar.config(bg='white', fg='black')
-        for menu in self.menubar.winfo_children():
-            menu.config(bg='white', fg='black')
-
-    def lightmode(self):
-        self.apply_light_mode()
-
-    def apply_contrast_mode(self):
-        # Change the background and foreground colors for high contrast mode
-        self.win.config(bg='#11189b')
-        self.menubar.config(bg='#11189b', fg='white')
-        for menu in self.menubar.winfo_children():
-            menu.config(bg='#11189b', fg='white')
-    
-    def contrastmode(self):
-        self.apply_contrast_mode()
+        self.win.option_add("*Font", "Helvetica 12")
+        self.update_all_widgets_font("Helvetica 12")
 
     def update_all_widgets_font(self, font):
-        # Update the font for all widgets in the window
         for widget in self.win.winfo_children():
-            widget.config(font=font)
+            widget.configure(font=font)
             for child in widget.winfo_children():
-                child.config(font=font)
+                child.configure(font=font)
+
+    def update_all_widgets_color(self, bg_color, fg_color):
+        def configure_widget(widget):
+            try:
+                widget.configure(bg=bg_color, fg=fg_color)
+            except TclError:
+                pass
+            for child in widget.winfo_children():
+                configure_widget(child)
+
+        # Update the main window
+        self.win.configure(bg=bg_color)
+        configure_widget(self.win)
+
+        # Update ttk styles
+        style = ttk.Style()
+        style.configure('TFrame', background=bg_color, foreground=fg_color)
+        style.configure('TLabel', background=bg_color, foreground=fg_color)
+        style.configure('TButton', background=bg_color, foreground=fg_color)
+        style.configure('TNotebook', background=bg_color, foreground=fg_color)
+        style.configure('TNotebook.Tab', background=bg_color, foreground=fg_color)
+
+    def darkmode(self):
+        self.update_all_widgets_color(bg_color='black', fg_color='white')
+
+    def lightmode(self):
+        self.update_all_widgets_color(bg_color='white', fg_color='black')
+
+    def contrastmode(self):
+        self.update_all_widgets_color(bg_color='yellow', fg_color='blue')
 
 class CoachWindow(BaseWindow):
     def __init__(self):
