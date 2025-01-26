@@ -65,26 +65,35 @@ class BaseWindow:
         Button(self.settings_frame, text='Exit', command=self.win.destroy).pack(pady=10, anchor='center')
 
     def arial_font(self):
+        print("Arial font button clicked")
         self.win.option_add("*Font", "Arial 12")
         self.update_all_widgets_font("Arial 12")
 
     def times_font(self):
+        print("Times font button clicked")
         self.win.option_add("*Font", "Times 12")
         self.update_all_widgets_font("Times 12")
 
     def courier_font(self):
+        print("Courier font button clicked")
         self.win.option_add("*Font", "Courier 12")
         self.update_all_widgets_font("Courier 12")
 
     def apply_font_original(self):
+        print("Original font button clicked")
         self.win.option_add("*Font", "Helvetica 12")
         self.update_all_widgets_font("Helvetica 12")
 
     def update_all_widgets_font(self, font):
-        for widget in self.win.winfo_children():
+        print(f"Updating all widgets to font: {font}")
+        self._update_widget_font(self.win, font)
+        self.win.update_idletasks()
+
+    def _update_widget_font(self, widget, font):
+        if 'font' in widget.keys():
             widget.configure(font=font)
-            for child in widget.winfo_children():
-                child.configure(font=font)
+        for child in widget.winfo_children():
+            self._update_widget_font(child, font)
 
     def update_all_widgets_color(self, bg_color, fg_color):
         def configure_widget(widget):
