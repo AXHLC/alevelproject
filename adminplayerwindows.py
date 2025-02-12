@@ -115,6 +115,12 @@ class BaseWindow:
         style.configure('TButton', background=bg_color, foreground=fg_color)
         style.configure('TNotebook', background=bg_color, foreground=fg_color)
         style.configure('TNotebook.Tab', background=bg_color, foreground=fg_color)
+        style.configure('TCombobox', background=bg_color, foreground=fg_color)
+        style.configure('TEntry', background=bg_color, foreground=fg_color)
+        style.configure('TMenubutton', background=bg_color, foreground=fg_color)
+        style.configure('TCheckbutton', background=bg_color, foreground=fg_color)
+        style.configure('TRadiobutton', background=bg_color, foreground=fg_color)
+
 
     def darkmode(self):
         self.update_all_widgets_color(bg_color='black', fg_color='white')
